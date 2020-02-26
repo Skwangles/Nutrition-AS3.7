@@ -49,10 +49,6 @@ namespace Nutrition_AS3._7
 
 
 
-
-
-
-
         #endregion
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -100,6 +96,8 @@ namespace Nutrition_AS3._7
             Console.WriteLine();
 
             //store the headings into the "headings" Array 
+
+            //DON'T USE - USE FOREACH() .FName!!!
             int loop = 0;
             foreach (Ingredient ing in Recipies)
             {
