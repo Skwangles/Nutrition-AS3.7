@@ -19,33 +19,44 @@ namespace Nutrition_AS3._7
         }
         #region Default Values and Arrays
         //sets the integers and arrays
-        readonly static string filepath = @"c:\";
-        readonly static int formwidth = 240;
+        readonly static string filepath = @"c:\Users\tree_\Downloads\";
+        readonly static int formwidth = 400;
         readonly int formheight = 520;
         public TextBox[] Forms_TextBoxes = new TextBox[11];
         public Button[] Forms_Buttons = new Button[11];
         public Label[] Forms_Labels = new Label[11];
         public ListBox[] Forms_ListBoxes = new ListBox[11];
+        int Default_Spacer = 30;
+        int QuanitityTBMaxLength = 5;
+        int QuantityBoxWidth = 30;
         string Recipe_Name_String;
-        // readonly int[] ItemsLeft = new int[] { 20, 100, TbRecipe, BSearch,BConfirm,BClearRecipe,LQuanity, LRecipeName, LSearchResults, LTitle};  //TbSearch, tbQuanitiy, TbRecipe, BSearch,BConfirm,BClearRecipe,LQuanity, LRecipeName, LSearchResults, LTitle
+        string SpecialChars = "!@#$%^&*()~`=+[{]}\\|;:'\",<.>/?";
+        //readonly int[] ItemsLeft = new int[] { 20, 100, 20, this.width - 50, this.width - 50, this.width / 2 };  //TbSearch, tbQuanitiy, TbRecipe, BSearch,BConfirm,BClearRecipe,LQuanity, LRecipeName, LSearchResults, LTitle
         // readonly int[] ItemsHeight = new int[] { TbSearch, tbQuanitiy, TbRecipe, BSearch,BConfirm,BClearRecipe,LQuanity, LRecipeName, LSearchResults, LTitle};
+
         //above, sets the locations of the forms items.
         static List<Ingredient> Recipies = new List<Ingredient>();
         //array to store nutrient info from file 
         // <--Old Array for file -->
-            //static string[,] nutrientArray = new string[2534, 9];
+        //static string[,] nutrientArray = new string[2534, 9];
         //array to store heading from file (if needed) 
 
         #endregion
 
-        
+
+
+
+
+
+
         private void Form1_Load(object sender, EventArgs e)
         {
+            int[] ItemsLeft = new int[] { 20, 100, 20, this.Width - 50, this.Width - 50, this.Width / 2 };  //TbSearch, tbQuanitiy, TbRecipe, BSearch,BConfirm,BClearRecipe,LQuanity, LRecipeName, LSearchResults, LTitle
             //starts the program 
             OpenFile();
             Setup();
             Recipe_Name();
-            //AddItems();
+
 
         }
         void Recipe_Name()
@@ -54,13 +65,13 @@ namespace Nutrition_AS3._7
             Forms_TextBoxes[2].KeyDown += new KeyEventHandler(RecipeName_KeyDown);
             Forms_TextBoxes[2].Text = "Enter Recipe Name";
 
-            
+
         }
         void Setup()
         {
             //uses the softvalues to setup the form
-            ActiveForm.Height = formheight;
-            ActiveForm.Width = formwidth;
+            this.Height = formheight;
+            this.Width = formwidth;
 
             //TbSearch, tbQuanitiy, TbRecipe, BSearch,BConfirm,BClearRecipe,LQuanity, LRecipeName, LSearchResults,LTitle
             Forms_TextBoxes[0] = new TextBox();  //Tb Search
@@ -114,15 +125,92 @@ namespace Nutrition_AS3._7
             {
                 Controls.Add(b);
             }
+            foreach (ListBox b in Forms_ListBoxes)
+            {
+                Controls.Add(b);
+            }
+
+            Setlocations();//in seperate method so later locations may be updated.
             //yet to add event handlers.
         }
+
+        void Setlocations()
+        {
+            //changing locations of each item.
+
+            //locks the search button to the search bar
+            Forms_TextBoxes[0].Left = Default_Spacer;
+            Forms_TextBoxes[0].Top = Default_Spacer;
+            Forms_TextBoxes[0].Width = Forms_ListBoxes[0].Width;
+
+            //Searchbutton
+            Forms_Buttons[0].Left = Forms_TextBoxes[0].Left + Forms_TextBoxes[0].Width + Default_Spacer;
+            Forms_Buttons[0].Top = Forms_TextBoxes[0].Top;
+            Forms_Buttons[0].Text = "Search";
+            //----------------------------------------
+            //Search results left same as search bar
+
+            //Search Results
+            Forms_ListBoxes[0].Left = Forms_TextBoxes[0].Left;//locks the top and left of Search results to Search text box
+            Forms_ListBoxes[0].Top = Forms_TextBoxes[0].Top + Default_Spacer;
+
+            //Clear Button
+            Forms_Buttons[2].Left = this.Width - Forms_Buttons[2].Width - 1;
+            Forms_Buttons[2].Text = "Clear";
+
+
+            //complete button
+            Forms_Buttons[3].Top = Forms_ListBoxes[1].Top + Forms_ListBoxes[1].Height + Default_Spacer;
+            Forms_Buttons[3].Left = Forms_ListBoxes[1].Left;
+            Forms_Buttons[3].Text = "Complete Recipe";
+            //Confirm Button
+            Forms_Buttons[1].Top = Forms_ListBoxes[0].Top; //locks confirm button to the Listbox results
+            Forms_Buttons[1].Left = Forms_ListBoxes[0].Left + Forms_ListBoxes[0].Width + Default_Spacer;
+            Forms_Buttons[1].Text = "Confirm";
+
+            //Quanitity textbox
+            Forms_TextBoxes[1].Left = Forms_Buttons[1].Left;//makes quanitity below the 
+            Forms_TextBoxes[1].Top = Forms_Buttons[1].Top + Forms_Buttons[1].Height;
+            Forms_TextBoxes[1].MaxLength = QuanitityTBMaxLength;
+            Forms_TextBoxes[1].Width = QuantityBoxWidth;
+
+            //Recipe contents
+            Forms_ListBoxes[1].Top = Forms_Buttons[2].Top + Forms_Buttons[2].Height + Default_Spacer;
+            Forms_ListBoxes[1].Left = this.Width - Forms_ListBoxes[1].Width;
+        }
+
+
+
 
         public void RecipeName_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                Recipe_Name_String = Forms_TextBoxes[2].Text;
-                //check for special cases
+                try
+                {
+                    //checks for special characters or errors
+                    Recipe_Name_String = Forms_TextBoxes[2].Text;
+                    foreach (char a in SpecialChars)
+                    {
+                        if (!Recipe_Name_String.Contains(a))
+                        {
+                            Forms_TextBoxes[2].Hide();
+                            AddItems();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Only AlphaNumerics and -_ are allowed.");
+                        }
+
+
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show("Recipe Name error has occured.");
+                }
+
+
             }
 
         }
@@ -134,18 +222,28 @@ namespace Nutrition_AS3._7
             //Open Nutrient file 
             string filename = "Nutrientfile.txt";
             StreamReader reader = File.OpenText(filepath + filename);
-            int i = 0; Console.Write(".... reading file");
+            int i = 0;
+            Console.Write(".... reading file");
 
             //Load data into an array 
             while (reader.Peek() != -1)
             {
-
-                //read in line and split by tab 
                 string[] line = reader.ReadLine().Split('\t');
+                if (!(i == 0))
+                {
 
-                Recipies.Add(new Ingredient(line[0], line[1], float.Parse(line[2]), float.Parse(line[3]), float.Parse(line[4]), float.Parse(line[5]), float.Parse(line[6]), float.Parse(line[7]), float.Parse(line[8])));
 
-                i++;
+                    //read in line and split by tab 
+
+                    foreach (string s in line)
+                    {
+                        Console.WriteLine(s);
+                    }
+
+                    Recipies.Add(new Ingredient(line[0], line[1], float.Parse(line[2]), float.Parse(line[3]), float.Parse(line[4]), float.Parse(line[5]), float.Parse(line[6]), float.Parse(line[7]), float.Parse(line[8])));
+
+                    i++;
+                }
             }
             reader.Close();
             Console.WriteLine(".... file read");
@@ -159,12 +257,16 @@ namespace Nutrition_AS3._7
 /*
 Next, to add button events, and add them to controls
 
-    Add checks for recipe name strign.
+
     Add values for other items and add their event handlers.
 To search list for .contains(searchQuery)
 and display the heading.
 
-Add the softcoded Alignment values for the Items (Buttons, labels, etc.) - Locations
+    <-----Need2Do--->
+Labels
+EventHandlers
+.contains, search result. (foreach ingridient.fname. contains(searchquery))
+
 
 Add method references.
 
@@ -173,9 +275,7 @@ Add proper code for filepath (In openfile method), so "Nutrients.txt" gets opene
 Add proper comments, so what is happening is easy to understand
 
 Tidy up the ordering.
-Put the others items set up method  call in the RecipeName method.
+
 Put in a universal Run method, to get  out of  the Load method
-----What Was Done---
-Added RecipeName method before the setup of other items
-Added items  to arrya
+
 */
