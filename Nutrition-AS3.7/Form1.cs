@@ -34,9 +34,7 @@ namespace Nutrition_AS3._7
         int QuanitityTBMaxLength = 5;
         int QuantityBoxWidth = 30;
         string Recipe_Name_String;
-        string SpecialChars = "!@#$%^&*()~`=+[{]}\\|;:'\",<.>/?";
-        bool hasRecipeName = false;
-
+        string SpecialChars = "!@#$%^&*~`=+[{]}\\|;:'\"<>/?";
         //above, sets the locations of the forms items.
         static List<Ingredient> Recipies = new List<Ingredient>();
         //array to store nutrient info from file 
@@ -125,8 +123,9 @@ namespace Nutrition_AS3._7
                 Forms_Buttons[1].Click += new EventHandler(Confirm_Click);
                 Forms_Buttons[2].Click += new EventHandler(ClearRecipe_Click);
                 Forms_Buttons[3].Click += new EventHandler(Complete_Click);
+                Forms_TextBoxes[0].KeyDown += new KeyEventHandler(SearchTextBox_KeyDown);
                 hasCalled = true;
-
+                Forms_TextBoxes[0].Focus();
 
                 Setlocations();//in seperate method so later locations may be updated.
                                //yet to add event handlers.
@@ -198,20 +197,32 @@ namespace Nutrition_AS3._7
                                               //makes sure the entries are put in alphabetical order
             if (!(Forms_TextBoxes[0].Text == "" || Forms_TextBoxes[0].Text == null)) //checks if box is empty
             {
-
-                foreach (Ingredient a in Recipies) //searches each item
+                foreach (char f in SpecialChars)
                 {
-                    if (a.FName.ToLower().Contains(Forms_TextBoxes[0].Text.ToLower()))//checks if search query exists, and if 
+                    if (!Forms_TextBoxes[0].Text.Contains(f))
                     {
-                        Forms_ListBoxes[0].Items.Add(a);
+                        foreach (Ingredient a in Recipies) //searches each item
+                        {
+                            if (a.FName.ToLower().Contains(Forms_TextBoxes[0].Text.ToLower()))//checks if search query exists, and if 
+                            {
+                                Forms_ListBoxes[0].Items.Add(a);
 
+                            }
+                            else
+                            {
+                                Console.WriteLine("Not contained");
+                            }
+
+                        }
                     }
                     else
                     {
-                        Console.WriteLine("Not contained");
+                        MessageBox.Show("Only AlphaNumerics and \",.()-_\" are allowed.");//As some names contain these punctuation.
                     }
 
+
                 }
+               
             }
             else
             {
@@ -280,6 +291,7 @@ namespace Nutrition_AS3._7
                 Sugars += s.FSug;
             }
             //put out the lables here
+            /*
             int a = 0;
             foreach (TextBox b in Forms_TextBoxes)
             {
@@ -301,6 +313,7 @@ namespace Nutrition_AS3._7
             {
                 b.Hide();
             }
+            */
             Console.WriteLine(Energy);
             Console.WriteLine(Protein);
             Console.WriteLine(FatTot);
@@ -309,43 +322,52 @@ namespace Nutrition_AS3._7
             Console.WriteLine(Sugars);
             Console.WriteLine(Sodium);
         }
+        public void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
 
+            if (e.KeyCode == Keys.Enter)
+            {
+
+                Forms_Buttons[0].PerformClick();
+
+            }
+        }
 
         public void RecipeName_KeyDown(object sender, KeyEventArgs e)
         {
+
             if (e.KeyCode == Keys.Enter)
             {
-                if (!hasRecipeName)
+
+                try
                 {
-                    try
+                    //checks for special characters or errors
+                    Recipe_Name_String = Forms_TextBoxes[2].Text;
+                    foreach (char a in SpecialChars)
                     {
-                        //checks for special characters or errors
-                        Recipe_Name_String = Forms_TextBoxes[2].Text;
-                        foreach (char a in SpecialChars)
+                        if (!Recipe_Name_String.Contains(a))
                         {
-                            if (!Recipe_Name_String.Contains(a))
-                            {
-                                Forms_TextBoxes[2].Hide();
-                                AddItems();
-                            }
-                            else
-                            {
-                                MessageBox.Show("Only AlphaNumerics and -_ are allowed.");
-                            }
-
-
+                            Forms_TextBoxes[2].Hide();
+                            AddItems();
                         }
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Recipe Name error has occured.");
-                    }
-                }
-                else
-                {
+                        else
+                        {
+                            MessageBox.Show("Only AlphaNumerics and \",.()-_\" are allowed.");
+                        }
 
+
+                    }
                 }
+                catch
+                {
+                    MessageBox.Show("Recipe Name error has occured.");
+                }
+
             }
+
+
+
+
 
         }
 
@@ -400,18 +422,12 @@ namespace Nutrition_AS3._7
 
 
 /*
-Next, to add button events, and add them to controls
 
 
-    Add values for other items and add their event handlers.
-To search list for .contains(searchQuery)
-and display the heading.
+
 
     <-----Need2Do--->
 Labels
-EventHandlers
-.contains, search result. (foreach ingridient.fname. contains(searchquery))
-
 
 Add method references.
 
@@ -422,5 +438,9 @@ Add proper comments, so what is happening is easy to understand
 Tidy up the ordering.
 
 Put in a universal Run method, to get  out of  the Load method
+
+    Comment.
+Add serving size textbox.(plan on reusing recipename tb, just with a bool running a different  series  of checks.)
+hide all other controls, so only recipe name is  showing, so user can enter that in. (may just add in a seperate box for quanitity)
 
 */
