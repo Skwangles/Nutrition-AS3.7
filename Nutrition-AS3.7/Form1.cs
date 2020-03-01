@@ -20,19 +20,22 @@ namespace Nutrition_AS3._7
         #region Default Values and Arrays
         //sets the integers and arrays
         readonly static string filepath = @"c:\Users\tree_\Downloads\";
-        readonly static int formwidth = 400;
-        readonly int formheight = 520;
+        readonly static int formwidth = 700;
+        readonly int formheight = 900;
         public TextBox[] Forms_TextBoxes = new TextBox[11];
         public Button[] Forms_Buttons = new Button[11];
         public Label[] Forms_Labels = new Label[11];
         public ListBox[] Forms_ListBoxes = new ListBox[11];
+        bool hasCalled = false;
         int Default_Spacer = 30;
+        int SearchResultsWidth = 280;
+        int SearchBarLeft = 0;
+        int RecipeContentsheight = 300;
         int QuanitityTBMaxLength = 5;
         int QuantityBoxWidth = 30;
         string Recipe_Name_String;
         string SpecialChars = "!@#$%^&*()~`=+[{]}\\|;:'\",<.>/?";
-        //readonly int[] ItemsLeft = new int[] { 20, 100, 20, this.width - 50, this.width - 50, this.width / 2 };  //TbSearch, tbQuanitiy, TbRecipe, BSearch,BConfirm,BClearRecipe,LQuanity, LRecipeName, LSearchResults, LTitle
-        // readonly int[] ItemsHeight = new int[] { TbSearch, tbQuanitiy, TbRecipe, BSearch,BConfirm,BClearRecipe,LQuanity, LRecipeName, LSearchResults, LTitle};
+        bool hasRecipeName = false;
 
         //above, sets the locations of the forms items.
         static List<Ingredient> Recipies = new List<Ingredient>();
@@ -88,50 +91,46 @@ namespace Nutrition_AS3._7
             Forms_ListBoxes[0] = new ListBox(); //Lb Search Results
             Forms_ListBoxes[1] = new ListBox(); //Lb Recipe
 
-
-
-            /*
-            TextBox TextBox_Search = new TextBox();
-            TextBox TextBox_Quantity = new TextBox();
-            TextBox TextBox_Recipe_Name = new TextBox();
-            Button Button_Search = new Button();
-            Button Button_Confirm = new Button();
-            Button Button_Clear_Recipe = new Button();
-            Button Button_Finished_Recipe = new Button();
-            Label label_Quantity = new Label();
-            Label label_Recipe = new Label();
-            Label label_Search_Results = new Label();
-            Label label_Title = new Label();
-            */
         }
 
         public void AddItems()
         {
-            //adds items to controls
-            int a = 0;//As  Recipe Textbox has already been added, is skipped(Index of it is 2)
-            foreach (TextBox b in Forms_TextBoxes)
+            if (!hasCalled)
             {
-                if (a != 2)
+                //adds items to controls
+                int a = 0;//As  Recipe Textbox has already been added, is skipped(Index of it is 2)
+                foreach (TextBox b in Forms_TextBoxes)
+                {
+                    if (a != 2)
+                    {
+                        Controls.Add(b);
+                        a++;
+                    }
+                }
+                foreach (Button b in Forms_Buttons)//loops through each array, adding them to controls.
                 {
                     Controls.Add(b);
-                    a++;
                 }
-            }
-            foreach (Button b in Forms_Buttons)//loops through each array, adding them to controls.
-            {
-                Controls.Add(b);
-            }
-            foreach (Label b in Forms_Labels)
-            {
-                Controls.Add(b);
-            }
-            foreach (ListBox b in Forms_ListBoxes)
-            {
-                Controls.Add(b);
-            }
+                foreach (Label b in Forms_Labels)
+                {
+                    Controls.Add(b);
+                }
+                foreach (ListBox b in Forms_ListBoxes)
+                {
+                    Controls.Add(b);
+                }
+                //Event Handlers
 
-            Setlocations();//in seperate method so later locations may be updated.
-            //yet to add event handlers.
+                Forms_Buttons[0].Click += new EventHandler(Search_Click);
+                Forms_Buttons[1].Click += new EventHandler(Confirm_Click);
+                Forms_Buttons[2].Click += new EventHandler(ClearRecipe_Click);
+                Forms_Buttons[3].Click += new EventHandler(Complete_Click);
+                hasCalled = true;
+
+
+                Setlocations();//in seperate method so later locations may be updated.
+                               //yet to add event handlers.
+            }
         }
 
         void Setlocations()
@@ -139,7 +138,7 @@ namespace Nutrition_AS3._7
             //changing locations of each item.
 
             //locks the search button to the search bar
-            Forms_TextBoxes[0].Left = Default_Spacer;
+            Forms_TextBoxes[0].Left = SearchBarLeft;
             Forms_TextBoxes[0].Top = Default_Spacer;
             Forms_TextBoxes[0].Width = Forms_ListBoxes[0].Width;
 
@@ -153,64 +152,199 @@ namespace Nutrition_AS3._7
             //Search Results
             Forms_ListBoxes[0].Left = Forms_TextBoxes[0].Left;//locks the top and left of Search results to Search text box
             Forms_ListBoxes[0].Top = Forms_TextBoxes[0].Top + Default_Spacer;
+            Forms_ListBoxes[0].Height = RecipeContentsheight;
+            Forms_ListBoxes[0].Width = SearchResultsWidth;
+            Forms_ListBoxes[0].HorizontalScrollbar = true;
+
 
             //Clear Button
             Forms_Buttons[2].Left = this.Width - Forms_Buttons[2].Width - 1;
             Forms_Buttons[2].Text = "Clear";
 
 
-            //complete button
-            Forms_Buttons[3].Top = Forms_ListBoxes[1].Top + Forms_ListBoxes[1].Height + Default_Spacer;
-            Forms_Buttons[3].Left = Forms_ListBoxes[1].Left;
-            Forms_Buttons[3].Text = "Complete Recipe";
             //Confirm Button
             Forms_Buttons[1].Top = Forms_ListBoxes[0].Top; //locks confirm button to the Listbox results
             Forms_Buttons[1].Left = Forms_ListBoxes[0].Left + Forms_ListBoxes[0].Width + Default_Spacer;
             Forms_Buttons[1].Text = "Confirm";
 
             //Quanitity textbox
+            Forms_TextBoxes[1].Width = QuantityBoxWidth;
             Forms_TextBoxes[1].Left = Forms_Buttons[1].Left;//makes quanitity below the 
             Forms_TextBoxes[1].Top = Forms_Buttons[1].Top + Forms_Buttons[1].Height;
             Forms_TextBoxes[1].MaxLength = QuanitityTBMaxLength;
-            Forms_TextBoxes[1].Width = QuantityBoxWidth;
 
             //Recipe contents
+            Forms_ListBoxes[1].Height = RecipeContentsheight;
+            Forms_ListBoxes[1].Width = SearchResultsWidth;
             Forms_ListBoxes[1].Top = Forms_Buttons[2].Top + Forms_Buttons[2].Height + Default_Spacer;
             Forms_ListBoxes[1].Left = this.Width - Forms_ListBoxes[1].Width;
+            Forms_ListBoxes[1].HorizontalScrollbar = true;
+
+
+            //complete button
+            Forms_Buttons[3].Top = Forms_ListBoxes[1].Top + Forms_ListBoxes[1].Height + Default_Spacer;
+            Forms_Buttons[3].Left = Forms_ListBoxes[1].Left;
+            Forms_Buttons[3].Text = "Complete Recipe";
+
+
+
         }
 
+        void Search_Click(object sender, EventArgs e)
+        {
 
+            Console.WriteLine("SearchClicked"); //notifies correct call
+            Forms_ListBoxes[0].Items.Clear(); //makes sure no prior searches remain
+                                              //makes sure the entries are put in alphabetical order
+            if (!(Forms_TextBoxes[0].Text == "" || Forms_TextBoxes[0].Text == null)) //checks if box is empty
+            {
+
+                foreach (Ingredient a in Recipies) //searches each item
+                {
+                    if (a.FName.ToLower().Contains(Forms_TextBoxes[0].Text.ToLower()))//checks if search query exists, and if 
+                    {
+                        Forms_ListBoxes[0].Items.Add(a);
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("Not contained");
+                    }
+
+                }
+            }
+            else
+            {
+                MessageBox.Show("Error with search Query");
+            }
+        }
+        void Confirm_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine("ConfirmClicked");
+            if (Forms_TextBoxes[1].Text != "" || Forms_TextBoxes[1].Text != null && Forms_ListBoxes[0].SelectedItem != null)
+            {
+                try
+                {
+
+                    ((Ingredient)Forms_ListBoxes[0].SelectedItem).Quantity = float.Parse(Forms_TextBoxes[1].Text);
+                    Forms_ListBoxes[1].Items.Add((Ingredient)Forms_ListBoxes[0].SelectedItem);
+                }
+                catch
+                {
+                    MessageBox.Show("Quanitity must be a number");
+                }
+            }
+            else
+            {
+                MessageBox.Show("No Quanitity OR No Item Selected.");
+            }
+
+        }
+        void ClearRecipe_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine("ClearClicked");
+            Forms_ListBoxes[1].Items.Clear();
+        }
+        void Complete_Click(object sender, EventArgs e)
+        {
+            float Energy = 0;
+            float Protein = 0;
+            float FatTot = 0;
+            float FatSats = 0;
+            float Carbs = 0;
+            float Sugars = 0;
+            float Sodium = 0;
+            float Quantitys = 0;
+            /*
+           0 Food ID
+1 Food name
+2 Energy (kJ)
+3 Protein (g)
+4 Fat, total (g)
+5 Fat, saturated (g)
+6 Available carbohydrate (g)
+7 Total sugars (g)
+8 Sodium (mg)
+             */
+
+            Console.WriteLine("CompleteClicked");
+            foreach (Ingredient s in Forms_ListBoxes[1].Items)
+            {
+                Quantitys += s.Quantity;
+                Energy += s.FEnergy;
+                Protein += s.FProtein;
+                FatTot += s.FFatTotal;
+                FatSats += s.FSat;
+                Carbs += s.FCarb;
+                Sodium += s.FSodium;
+                Sugars += s.FSug;
+            }
+            //put out the lables here
+            int a = 0;
+            foreach (TextBox b in Forms_TextBoxes)
+            {
+                if (a != 2)
+                {
+                    b.Hide();
+                    a++;
+                }
+            }
+            foreach (Button b in Forms_Buttons)//loops through each array, adding them to controls.
+            {
+                b.Hide();
+            }
+            foreach (Label b in Forms_Labels)
+            {
+                b.Hide();
+            }
+            foreach (ListBox b in Forms_ListBoxes)
+            {
+                b.Hide();
+            }
+            Console.WriteLine(Energy);
+            Console.WriteLine(Protein);
+            Console.WriteLine(FatTot);
+            Console.WriteLine(FatSats);
+            Console.WriteLine(Carbs);
+            Console.WriteLine(Sugars);
+            Console.WriteLine(Sodium);
+        }
 
 
         public void RecipeName_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                try
+                if (!hasRecipeName)
                 {
-                    //checks for special characters or errors
-                    Recipe_Name_String = Forms_TextBoxes[2].Text;
-                    foreach (char a in SpecialChars)
+                    try
                     {
-                        if (!Recipe_Name_String.Contains(a))
+                        //checks for special characters or errors
+                        Recipe_Name_String = Forms_TextBoxes[2].Text;
+                        foreach (char a in SpecialChars)
                         {
-                            Forms_TextBoxes[2].Hide();
-                            AddItems();
-                        }
-                        else
-                        {
-                            MessageBox.Show("Only AlphaNumerics and -_ are allowed.");
-                        }
+                            if (!Recipe_Name_String.Contains(a))
+                            {
+                                Forms_TextBoxes[2].Hide();
+                                AddItems();
+                            }
+                            else
+                            {
+                                MessageBox.Show("Only AlphaNumerics and -_ are allowed.");
+                            }
 
 
+                        }
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Recipe Name error has occured.");
                     }
                 }
-                catch
+                else
                 {
-                    MessageBox.Show("Recipe Name error has occured.");
+
                 }
-
-
             }
 
         }
@@ -222,13 +356,17 @@ namespace Nutrition_AS3._7
             //Open Nutrient file 
             string filename = "Nutrientfile.txt";
             StreamReader reader = File.OpenText(filepath + filename);
-            int i = 0;
+
+
+            int i = 0;//Skip the very first line, which says the layout
             Console.Write(".... reading file");
+
 
             //Load data into an array 
             while (reader.Peek() != -1)
             {
                 string[] line = reader.ReadLine().Split('\t');
+
                 if (!(i == 0))
                 {
 
@@ -244,6 +382,10 @@ namespace Nutrition_AS3._7
 
                     i++;
                 }
+                else
+                {
+                    i++;
+                }
             }
             reader.Close();
             Console.WriteLine(".... file read");
@@ -254,6 +396,9 @@ namespace Nutrition_AS3._7
 
     }
 }
+
+
+
 /*
 Next, to add button events, and add them to controls
 
