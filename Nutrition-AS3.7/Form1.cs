@@ -33,6 +33,7 @@ namespace Nutrition_AS3._7
         int RecipeContentsheight = 300;
         int QuanitityTBMaxLength = 5;
         int QuantityBoxWidth = 30;
+        int ServingSizeWidth = 20;
         string Recipe_Name_String;
         string SpecialChars = "!@#$%^&*~`=+[{]}\\|;:'\"<>/?";
         //above, sets the locations of the forms items.
@@ -192,8 +193,8 @@ namespace Nutrition_AS3._7
             //Serving size
             Forms_TextBoxes[3].Top = Forms_Buttons[3].Top + Forms_Buttons[3].Height;
             Forms_TextBoxes[3].Left = Forms_ListBoxes[1].Left;
-
-
+            Forms_TextBoxes[3].MaxLength = 3;
+            Forms_TextBoxes[3].Width = ServingSizeWidth;
         }
 
         void Search_Click(object sender, EventArgs e)
@@ -219,17 +220,13 @@ namespace Nutrition_AS3._7
                             {
                                 Console.WriteLine("Not contained");
                             }
-
                         }
                     }
                     else
                     {
                         MessageBox.Show("Only AlphaNumerics and \",.()-_\" are allowed.");//As some names contain these punctuation.
                     }
-
-
                 }
-
             }
             else
             {
@@ -243,7 +240,6 @@ namespace Nutrition_AS3._7
             {
                 try
                 {
-
                     ((Ingredient)Forms_ListBoxes[0].SelectedItem).Quantity = float.Parse(Forms_TextBoxes[1].Text);//adds the quanitity added
                     Forms_ListBoxes[1].Items.Add((Ingredient)Forms_ListBoxes[0].SelectedItem);//adds to the recipe list.
                 }
@@ -271,18 +267,14 @@ namespace Nutrition_AS3._7
                 try
                 {
 
-                    float servingSize = float.Parse(Forms_TextBoxes[3].Text);
 
 
 
-                    float Energy = 0;
-                    float Protein = 0;
-                    float FatTot = 0;
-                    float FatSats = 0;
-                    float Carbs = 0;
-                    float Sugars = 0;
-                    float Sodium = 0;
                     float Quantitys = 0;
+                    float servingSize = float.Parse(Forms_TextBoxes[3].Text);
+                    float servings = Quantitys / servingSize;
+                    var Per100Grams = new float[8];
+                    var AverageSize = new float[8];
                     /*
                    0 Food ID
         1 Food name
@@ -294,28 +286,53 @@ namespace Nutrition_AS3._7
         7 Total sugars (g)
         8 Sodium (mg)
                      */
-
-                    Console.WriteLine("CompleteClicked");
                     foreach (Ingredient s in Forms_ListBoxes[1].Items)
                     {
                         Quantitys += s.Quantity;
-                        Energy += s.FEnergy;
-                        Protein += s.FProtein;
-                        FatTot += s.FFatTotal;
-                        FatSats += s.FSat;
-                        Carbs += s.FCarb;
-                        Sodium += s.FSodium;
-                        Sugars += s.FSug;
                     }
 
+                    Console.WriteLine("CompleteClicked");
+                    int b;
+                    foreach (Ingredient s in Forms_ListBoxes[1].Items)
+                    {
+                        b = 0;
+                        //Energy, Protein, FatTotal, FatSat, Carbs, Sodium, Sugar
+                        Per100Grams[b] += s.FEnergy * (s.Quantity / Quantitys);
+                        b++;
+                        Per100Grams[b] += s.FProtein * (s.Quantity / Quantitys);
+                        b++;
+                        Per100Grams[b] += s.FFatTotal * (s.Quantity / Quantitys);
+                        b++;
+                        Per100Grams[b] += s.FSat * (s.Quantity / Quantitys);
+                        b++;
+                        Per100Grams[b] += s.FCarb * (s.Quantity / Quantitys);
+                        b++;
+                        Per100Grams[b] += s.FSodium * (s.Quantity / Quantitys);
+                        b++;
+                        Per100Grams[b] += s.FSug * (s.Quantity / Quantitys);
+                    }
+                    
+                    foreach (Ingredient s in Forms_ListBoxes[1].Items)
+                    {
+                        //Energy, Protein, FatTotal, FatSat, Carbs, Sodium, Sugar
+                        for (b = 0; b <= Per100Grams.Count(); b++)
+                        {
+                            AverageSize[b] += Per100Grams[b] * (servingSize / 100);//loops through each entry and applys the average calculation.                            
+                        }
+                    }
 
-                    Console.WriteLine(Energy);
-                    Console.WriteLine(Protein);
-                    Console.WriteLine(FatTot);
-                    Console.WriteLine(FatSats);
-                    Console.WriteLine(Carbs);
-                    Console.WriteLine(Sugars);
-                    Console.WriteLine(Sodium);
+                    
+                    Console.WriteLine("Per100Grams:");
+                    foreach (float s in Per100Grams)
+                    {
+                        Console.Write(s.ToString() + "    ");
+                    }
+                    Console.WriteLine("AverageSize:");
+                    foreach (float s in AverageSize)
+                    {
+                        Console.Write(s.ToString() + "    ");
+                    }
+
                 }
                 catch
                 {
