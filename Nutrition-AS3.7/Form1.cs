@@ -273,8 +273,8 @@ namespace Nutrition_AS3._7
                     float Quantitys = 0;
                     float servingSize = float.Parse(Forms_TextBoxes[3].Text);
                     float servings = Quantitys / servingSize;
-                    var Per100Grams = new float[8];
-                    var AverageSize = new float[8];
+                    var Per100Grams = new float[9];
+                    var AverageSize = new float[9];
                     /*
                    0 Food ID
         1 Food name
@@ -315,7 +315,7 @@ namespace Nutrition_AS3._7
                     foreach (Ingredient s in Forms_ListBoxes[1].Items)
                     {
                         //Energy, Protein, FatTotal, FatSat, Carbs, Sodium, Sugar
-                        for (b = 0; b <= Per100Grams.Count(); b++)
+                        for (b = 0; b < Per100Grams.Count(); b++)
                         {
                             AverageSize[b] += Per100Grams[b] * (servingSize / 100);//loops through each entry and applys the average calculation.                            
                         }
