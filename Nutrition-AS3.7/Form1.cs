@@ -21,7 +21,7 @@ namespace Nutrition_AS3._7
         //sets the integers and arrays
         readonly static string filepath = @"c:\Users\tree_\Downloads\"; //file path
         readonly static int formwidth = 700;
-        readonly int formheight = 900;
+        readonly int formheight = 500;
         public TextBox[] Forms_TextBoxes = new TextBox[11]; //stores the instances of textboxes
         public Button[] Forms_Buttons = new Button[11];//stores the instances of Buttons
         public Label[] Forms_Labels = new Label[11]; //stores the instances of Labels
@@ -40,7 +40,7 @@ namespace Nutrition_AS3._7
         static List<Ingredient> Recipies = new List<Ingredient>();
         //array to store nutrient info from file 
         //starts the program 
-        public PictureBox Table = new PictureBox();
+        //public PictureBox Table = new PictureBox();
 
 
 
@@ -305,9 +305,11 @@ namespace Nutrition_AS3._7
                         b++;
                         Per100Grams[b] += s.FCarb * (s.Quantity / Quantitys);
                         b++;
-                        Per100Grams[b] += s.FSodium * (s.Quantity / Quantitys);
-                        b++;
                         Per100Grams[b] += s.FSug * (s.Quantity / Quantitys);
+                        b++;
+                        Per100Grams[b] += s.FSodium * (s.Quantity / Quantitys);
+                       
+                        
                     }
 
                     foreach (Ingredient s in Forms_ListBoxes[1].Items)
@@ -345,21 +347,36 @@ namespace Nutrition_AS3._7
         {
             try
             {
-                Controls.Add(Table);
-                Table.BringToFront();
-                Table.Location = new Point(0, 0);
-                Table.Height = formheight;
-                Table.Width = formwidth;
-                Graphics g = Table.CreateGraphics();
+                // Controls.Add(Table);
+                //Table.BringToFront();
+                //Table.Location = new Point(0, 0);
+                //Table.Height = formheight;
+                //Table.Width = formwidth;
+                foreach (Control a in Controls)
+                {
+                    a.Hide();
+                }
+                Graphics g = this.CreateGraphics();
 
                 string[] NutritionSubjects = new string[] { "Energy", "Protein", "Fat, Total", " -Saturated Fat", "Carbohydrates", "Sugars", "Sodium" };
-                g.FillRectangle(new SolidBrush(Color.Black), new Rectangle(Table.Left, Table.Top, formwidth, formheight));
-                g.DrawString("Entry       Per100g       Average Per Serving", new Font("Arial", 16), new SolidBrush(Color.White), 0, 0);
-                for (int i = 1; i < 7; i++)
+               
+                g.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, formwidth, formheight));
+                g.DrawString(Recipe_Name_String, new Font("Arial", 16), new SolidBrush(Color.White), 0, 0);
+                for (int i = 1; i < 8; i++)
                 {
-                    g.DrawString(NutritionSubjects[i-1] + Per100g[i-1], new Font("Arial", 16), new SolidBrush(Color.White), 0, i * 20);
+                    g.DrawString(NutritionSubjects[i - 1], new Font("Arial", 16), new SolidBrush(Color.White), 0, i * 40);
                 }
-                g.Dispose();
+                g.DrawString("Per 100 Grams", new Font("Arial", 16), new SolidBrush(Color.White), 200, 0);
+                for (int i = 1; i < Per100g.Length-1; i++)
+                {
+                    g.DrawString(Per100g[i - 1].ToString(), new Font("Arial", 10), new SolidBrush(Color.White), 200, i * 40);
+                }
+                g.DrawString("Average serving size", new Font("Arial", 16), new SolidBrush(Color.White), 400, 0);
+                for (int i = 1; i < avg.Length-1; i++)
+                {
+                    g.DrawString(avg[i - 1].ToString(), new Font("Arial", 10), new SolidBrush(Color.White), 400, i * 40);
+                }
+
             }
             catch
             {
