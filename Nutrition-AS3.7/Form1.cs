@@ -39,21 +39,19 @@ namespace Nutrition_AS3._7
         //above, sets the locations of the forms items.
         static List<Ingredient> Recipies = new List<Ingredient>();
         //array to store nutrient info from file 
+        //starts the program 
+        public PictureBox Table = new PictureBox();
 
 
 
         #endregion
 
-
-
-
-
+        #region Collapse for work on Nutrients table
 
 
         private void Form1_Load(object sender, EventArgs e)
-        {
-            int[] ItemsLeft = new int[] { 20, 100, 20, this.Width - 50, this.Width - 50, this.Width / 2 };  //TbSearch, tbQuanitiy, TbRecipe, BSearch,BConfirm,BClearRecipe,LQuanity, LRecipeName, LSearchResults, LTitle
-            //starts the program 
+        {  //TbSearch, tbQuanitiy, TbRecipe, BSearch,BConfirm,BClearRecipe,LQuanity, LRecipeName, LSearchResults, LTitle
+
             OpenFile();
             Setup();
             Recipe_Name();
@@ -311,7 +309,7 @@ namespace Nutrition_AS3._7
                         b++;
                         Per100Grams[b] += s.FSug * (s.Quantity / Quantitys);
                     }
-                    
+
                     foreach (Ingredient s in Forms_ListBoxes[1].Items)
                     {
                         //Energy, Protein, FatTotal, FatSat, Carbs, Sodium, Sugar
@@ -321,27 +319,51 @@ namespace Nutrition_AS3._7
                         }
                     }
 
-                    
-                    Console.WriteLine("Per100Grams:");
-                    foreach (float s in Per100Grams)
-                    {
-                        Console.Write(s.ToString() + "    ");
-                    }
-                    Console.WriteLine("AverageSize:");
-                    foreach (float s in AverageSize)
-                    {
-                        Console.Write(s.ToString() + "    ");
-                    }
+
+
+                    DrawNutrientsTable(Per100Grams, AverageSize);
+
+
+
 
                 }
                 catch
                 {
                     MessageBox.Show("Serving size must be a number.");
+
                 }
             }
             else
             {
                 MessageBox.Show("No item selected, or no serving size.");
+            }
+
+        }
+
+        #endregion
+        public void DrawNutrientsTable(float[] Per100g, float[] avg)
+        {
+            try
+            {
+                Controls.Add(Table);
+                Table.BringToFront();
+                Table.Location = new Point(0, 0);
+                Table.Height = formheight;
+                Table.Width = formwidth;
+                Graphics g = Table.CreateGraphics();
+
+                string[] NutritionSubjects = new string[] { "Energy", "Protein", "Fat, Total", " -Saturated Fat", "Carbohydrates", "Sugars", "Sodium" };
+                g.FillRectangle(new SolidBrush(Color.Black), new Rectangle(Table.Left, Table.Top, formwidth, formheight));
+                g.DrawString("Entry       Per100g       Average Per Serving", new Font("Arial", 16), new SolidBrush(Color.White), 0, 0);
+                for (int i = 1; i < 7; i++)
+                {
+                    g.DrawString(NutritionSubjects[i-1] + Per100g[i-1], new Font("Arial", 16), new SolidBrush(Color.White), 0, i * 20);
+                }
+                g.Dispose();
+            }
+            catch
+            {
+                throw new Exception();
             }
         }
         public void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
