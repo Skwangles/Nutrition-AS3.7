@@ -16,7 +16,9 @@ namespace Nutrition_AS3._7
         public Form1()
         {
             InitializeComponent();
+            g = this.CreateGraphics();
         }
+        Graphics g;
         #region Default Values and Arrays
         //sets the integers and arrays
         readonly static string filepath = @"c:\Users\tree_\Downloads\"; //file path
@@ -34,10 +36,12 @@ namespace Nutrition_AS3._7
         int QuanitityTBMaxLength = 5;
         int QuantityBoxWidth = 30;
         int ServingSizeWidth = 20;
+        Color ButtonsColor = SystemColors.ButtonFace;
         string Recipe_Name_String;
         string SpecialChars = "!@#$%^&*~`=+[{]}\\|;:'\"<>/?";
         //above, sets the locations of the forms items.
         static List<Ingredient> Recipies = new List<Ingredient>();
+
         //array to store nutrient info from file 
         //starts the program 
         //public PictureBox Table = new PictureBox();
@@ -68,6 +72,8 @@ namespace Nutrition_AS3._7
         }
         void Setup()
         {
+
+
             //uses the softvalues to setup the form
             this.Height = formheight;
             this.Width = formwidth;
@@ -89,6 +95,7 @@ namespace Nutrition_AS3._7
             Forms_ListBoxes[1] = new ListBox(); //Lb Recipe
 
         }
+
 
         public void AddItems()
         {
@@ -129,14 +136,17 @@ namespace Nutrition_AS3._7
                 Forms_TextBoxes[0].KeyDown += new KeyEventHandler(SearchTextBox_KeyDown);//checks for the "enter" key in hte textbox
                 hasCalled = true;
                 Forms_TextBoxes[0].Focus();//Focuses the cursour on the search bar
+                this.BackColor = Color.Beige;
 
                 Setlocations();//in seperate method so later locations may be updated.
+
 
             }
         }
 
         void Setlocations()
         {
+
             //changing locations of each item.
 
             //locks the search button to the search bar
@@ -148,6 +158,7 @@ namespace Nutrition_AS3._7
             Forms_Buttons[0].Left = Forms_TextBoxes[0].Left + Forms_TextBoxes[0].Width + Default_Spacer;
             Forms_Buttons[0].Top = Forms_TextBoxes[0].Top;
             Forms_Buttons[0].Text = "Search";
+            Forms_Buttons[0].BackColor = ButtonsColor;
             //----------------------------------------
             //Search results left same as search bar
 
@@ -162,12 +173,14 @@ namespace Nutrition_AS3._7
             //Clear Button
             Forms_Buttons[2].Left = this.Width - Forms_Buttons[2].Width - 1;
             Forms_Buttons[2].Text = "Clear";
-
+            Forms_Buttons[2].BackColor = ButtonsColor;
 
             //Confirm Button
             Forms_Buttons[1].Top = Forms_ListBoxes[0].Top; //locks confirm button to the Listbox results
             Forms_Buttons[1].Left = Forms_ListBoxes[0].Left + Forms_ListBoxes[0].Width + Default_Spacer;
             Forms_Buttons[1].Text = "Confirm";
+            Forms_Buttons[1].BackColor = ButtonsColor;
+            
 
             //Quanitity textbox
             Forms_TextBoxes[1].Width = QuantityBoxWidth;
@@ -183,16 +196,49 @@ namespace Nutrition_AS3._7
             Forms_ListBoxes[1].HorizontalScrollbar = true;
 
 
+
             //complete button
             Forms_Buttons[3].Top = Forms_ListBoxes[1].Top + Forms_ListBoxes[1].Height + Default_Spacer;
             Forms_Buttons[3].Left = Forms_ListBoxes[1].Left;
             Forms_Buttons[3].Text = "Complete Recipe";
+            Forms_Buttons[3].BackColor = ButtonsColor;
 
             //Serving size
             Forms_TextBoxes[3].Top = Forms_Buttons[3].Top + Forms_Buttons[3].Height;
             Forms_TextBoxes[3].Left = Forms_ListBoxes[1].Left;
             Forms_TextBoxes[3].MaxLength = 3;
             Forms_TextBoxes[3].Width = ServingSizeWidth;
+
+            //LQuantity
+            //Recipe Name
+
+
+            //Quantity Label
+            Forms_Labels[0].Left = Forms_Buttons[1].Left;
+            Forms_Labels[0].Top = Forms_Buttons[1].Top + Forms_Buttons[1].Height;
+            Forms_Labels[0].Text = "Enter Quantity Above";
+
+            //Quantity Label
+            Forms_Labels[1].Left = Forms_ListBoxes[1].Left;
+            Forms_Labels[1].Top = Forms_ListBoxes[1].Top - Forms_Labels[1].Height;
+            Forms_Labels[1].Text = Recipe_Name_String + " Ingredients";
+
+            //Search Here Label
+            Forms_Labels[2].Width = 100;
+            Forms_Labels[2].Left = SearchBarLeft;
+            Forms_Labels[2].Top = Forms_TextBoxes[0].Top - Forms_Labels[2].Height;
+            Forms_Labels[2].Text = "Search Here";
+
+            //Serving Size Label
+            Forms_Labels[3].Left = Forms_TextBoxes[3].Left + Forms_TextBoxes[3].Width;
+            Forms_Labels[3].Top = Forms_TextBoxes[3].Top;
+            Forms_Labels[3].Text = "Serving Size";
+
+            Forms_Buttons[0].UseVisualStyleBackColor = true;
+            Forms_Buttons[1].UseVisualStyleBackColor = true;
+            Forms_Buttons[2].UseVisualStyleBackColor = true;
+            Forms_Buttons[3].UseVisualStyleBackColor = true;
+
         }
 
         void Search_Click(object sender, EventArgs e)
@@ -308,8 +354,8 @@ namespace Nutrition_AS3._7
                         Per100Grams[b] += s.FSug * (s.Quantity / Quantitys);
                         b++;
                         Per100Grams[b] += s.FSodium * (s.Quantity / Quantitys);
-                       
-                        
+
+
                     }
 
                     foreach (Ingredient s in Forms_ListBoxes[1].Items)
@@ -356,10 +402,10 @@ namespace Nutrition_AS3._7
                 {
                     a.Hide();
                 }
-                Graphics g = this.CreateGraphics();
+
 
                 string[] NutritionSubjects = new string[] { "Energy", "Protein", "Fat, Total", " -Saturated Fat", "Carbohydrates", "Sugars", "Sodium" };
-               
+
                 g.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, formwidth, formheight));
                 g.DrawString(Recipe_Name_String, new Font("Arial", 16), new SolidBrush(Color.White), 0, 0);
                 for (int i = 1; i < 8; i++)
@@ -367,12 +413,12 @@ namespace Nutrition_AS3._7
                     g.DrawString(NutritionSubjects[i - 1], new Font("Arial", 16), new SolidBrush(Color.White), 0, i * 40);
                 }
                 g.DrawString("Per 100 Grams", new Font("Arial", 16), new SolidBrush(Color.White), 200, 0);
-                for (int i = 1; i < Per100g.Length-1; i++)
+                for (int i = 1; i < Per100g.Length - 1; i++)
                 {
                     g.DrawString(Per100g[i - 1].ToString(), new Font("Arial", 10), new SolidBrush(Color.White), 200, i * 40);
                 }
                 g.DrawString("Average serving size", new Font("Arial", 16), new SolidBrush(Color.White), 400, 0);
-                for (int i = 1; i < avg.Length-1; i++)
+                for (int i = 1; i < avg.Length - 1; i++)
                 {
                     g.DrawString(avg[i - 1].ToString(), new Font("Arial", 10), new SolidBrush(Color.White), 400, i * 40);
                 }
