@@ -36,9 +36,12 @@ namespace Nutrition_AS3._7
         int QuanitityTBMaxLength = 5;
         int QuantityBoxWidth = 30;
         int ServingSizeWidth = 20;
+        bool isSearching = false;
+        bool containsSpecialCaps = false;
         Color ButtonsColor = SystemColors.ButtonFace;
         string Recipe_Name_String;
         string SpecialChars = "!@#$%^&*~`=+[{]}\\|;:'\"<>/?";
+        string AllSpecialChars = "\",.()-_\"!@#$%^&*~`=+[{]}\\|;:'\"<>/?";
         //above, sets the locations of the forms items.
         static List<Ingredient> Recipies = new List<Ingredient>();
 
@@ -50,33 +53,36 @@ namespace Nutrition_AS3._7
 
         #endregion
 
-        #region Collapse for work on Nutrients table
-
 
         private void Form1_Load(object sender, EventArgs e)
         {  //TbSearch, tbQuanitiy, TbRecipe, BSearch,BConfirm,BClearRecipe,LQuanity, LRecipeName, LSearchResults, LTitle
-
             OpenFile();
             Setup();
             Recipe_Name();
-
-
-        }
+        }//Program Starter
         void Recipe_Name()
         {
             Controls.Add(Forms_TextBoxes[2]);
             Forms_TextBoxes[2].KeyDown += new KeyEventHandler(RecipeName_KeyDown);
             Forms_TextBoxes[2].Text = "Enter Recipe Name";
+            Forms_TextBoxes[2].Left = 0;
+            Forms_TextBoxes[2].Top = 0;
+            Forms_TextBoxes[2].AutoSize = true;
+            Forms_TextBoxes[2].Font = new Font("Arial", 16);
+            //Recipe Name Textbox 
+            Forms_TextBoxes[2].ClientSize = new Size(this.Width, 100);
+            Forms_TextBoxes[2].TextAlign = HorizontalAlignment.Center;
+            Forms_TextBoxes[2].MaxLength = 30;//doesnt need to be any longer
 
+        }//Runs the method to get the recipe name.
 
-        }
+        #region Setup Processes
         void Setup()
         {
-
-
             //uses the softvalues to setup the form
             this.Height = formheight;
             this.Width = formwidth;
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
 
             //TbSearch, tbQuanitiy, TbRecipe, BSearch,BConfirm,BClearRecipe,LQuanity, LRecipeName, LSearchResults,LTitle
             Forms_TextBoxes[0] = new TextBox();  //Tb Search
@@ -93,10 +99,7 @@ namespace Nutrition_AS3._7
             Forms_Labels[3] = new Label();    //L Title
             Forms_ListBoxes[0] = new ListBox(); //Lb Search Results
             Forms_ListBoxes[1] = new ListBox(); //Lb Recipe
-
-        }
-
-
+        }//sets instances, and formprioetues
         public void AddItems()
         {
             if (!hasCalled)//checks if the items have already been added.
@@ -142,8 +145,7 @@ namespace Nutrition_AS3._7
 
 
             }
-        }
-
+        }//adds items to controls
         void Setlocations()
         {
 
@@ -180,7 +182,7 @@ namespace Nutrition_AS3._7
             Forms_Buttons[1].Left = Forms_ListBoxes[0].Left + Forms_ListBoxes[0].Width + Default_Spacer;
             Forms_Buttons[1].Text = "Confirm";
             Forms_Buttons[1].BackColor = ButtonsColor;
-            
+
 
             //Quanitity textbox
             Forms_TextBoxes[1].Width = QuantityBoxWidth;
@@ -214,13 +216,15 @@ namespace Nutrition_AS3._7
 
 
             //Quantity Label
-            Forms_Labels[0].Left = Forms_Buttons[1].Left;
+            Forms_Labels[0].Left = Forms_TextBoxes[1].Left + Forms_TextBoxes[1].Width;
             Forms_Labels[0].Top = Forms_Buttons[1].Top + Forms_Buttons[1].Height;
-            Forms_Labels[0].Text = "Enter Quantity Above";
+            Forms_Labels[0].Text = "(g)Quantity";
+            Forms_Labels[0].Width = 75;
 
             //Quantity Label
             Forms_Labels[1].Left = Forms_ListBoxes[1].Left;
             Forms_Labels[1].Top = Forms_ListBoxes[1].Top - Forms_Labels[1].Height;
+            Forms_Labels[1].Width = Forms_ListBoxes[1].Width;
             Forms_Labels[1].Text = Recipe_Name_String + " Ingredients";
 
             //Search Here Label
@@ -239,26 +243,60 @@ namespace Nutrition_AS3._7
             Forms_Buttons[2].UseVisualStyleBackColor = true;
             Forms_Buttons[3].UseVisualStyleBackColor = true;
 
-        }
+            foreach (TextBox a in Forms_TextBoxes)
+            {
+                try
+                {
 
+
+                    a.TextAlign = HorizontalAlignment.Center;
+                }
+                catch
+                {
+
+                }
+
+
+            }
+
+
+        }//sets item propetires
+        #endregion
+
+        #region Event Handlers
         void Search_Click(object sender, EventArgs e)
         {
-
-            Console.WriteLine("SearchClicked"); //notifies correct call
-            Forms_ListBoxes[0].Items.Clear(); //makes sure no prior searches remain
-                                              //makes sure the entries are put in alphabetical order
-            if (!(Forms_TextBoxes[0].Text == "" || Forms_TextBoxes[0].Text == null)) //checks if box is empty
+            if (!isSearching)
             {
-                foreach (char f in SpecialChars)//checks if there are any disallowed chars in the string
+
+                isSearching = true;
+                Console.WriteLine("SearchClicked"); //notifies correct call
+                Forms_ListBoxes[0].Items.Clear(); //makes sure no prior searches remain
+                                                  //makes sure the entries are put in alphabetical order
+                if (!(Forms_TextBoxes[0].Text == "" || Forms_TextBoxes[0].Text == null)) //checks if box is empty
                 {
-                    if (!Forms_TextBoxes[0].Text.Contains(f))
+                    containsSpecialCaps = false;
+                    foreach (char f in SpecialChars)//checks if there are any disallowed chars in the string
                     {
+                        if (!Forms_TextBoxes[0].Text.Contains(f))
+                        {
+
+                        }
+                        else
+                        {
+                            containsSpecialCaps = true;
+                        }
+                    }
+                    if (!containsSpecialCaps)
+                    {
+
+
+                        Forms_ListBoxes[0].Items.Clear();
                         foreach (Ingredient a in Recipies) //searches each item
                         {
                             if (a.FName.ToLower().Contains(Forms_TextBoxes[0].Text.ToLower()))//checks if search query exists, and if it is present
                             {
                                 Forms_ListBoxes[0].Items.Add(a);
-
                             }
                             else
                             {
@@ -266,129 +304,142 @@ namespace Nutrition_AS3._7
                             }
                         }
                     }
-                    else
-                    {
-                        MessageBox.Show("Only AlphaNumerics and \",.()-_\" are allowed.");//As some names contain these punctuation.
-                    }
+
                 }
+                else
+                {
+                    MessageBox.Show("Only AlphaNumerics and \",.()-_\" are allowed.");//As some names contain these punctuation.
+                }
+
             }
             else
             {
                 MessageBox.Show("Error with search Query");
             }
+            isSearching = false;
         }
+        //eventhandler for search button
         void Confirm_Click(object sender, EventArgs e)
         {
             Console.WriteLine("ConfirmClicked");
             if (Forms_TextBoxes[1].Text != "" || Forms_TextBoxes[1].Text != null && Forms_ListBoxes[0].SelectedItem != null)
             {
-                try
+                containsSpecialCaps = false;
+                foreach (char a in AllSpecialChars)
                 {
-                    ((Ingredient)Forms_ListBoxes[0].SelectedItem).Quantity = float.Parse(Forms_TextBoxes[1].Text);//adds the quanitity added
-                    Forms_ListBoxes[1].Items.Add((Ingredient)Forms_ListBoxes[0].SelectedItem);//adds to the recipe list.
+                    if (Forms_TextBoxes[3].Text.Contains(a))
+                    {
+                        containsSpecialCaps = true;
+                    }
                 }
-                catch
+                if (!Forms_TextBoxes[3].Text.Contains("i"))
                 {
-                    MessageBox.Show("Quanitity must be a number");
+                    try
+                    {
+                        ((Ingredient)Forms_ListBoxes[0].SelectedItem).Quantity = float.Parse(Forms_TextBoxes[1].Text);//adds the quanitity added
+                        Forms_ListBoxes[1].Items.Add((Ingredient)Forms_ListBoxes[0].SelectedItem);//adds to the recipe list.
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Invalid item selected OR Quanitity must be a number >0");
+                    }
+
+                }
+                else
+                {
+                    MessageBox.Show("I do not accept letters, or Complex numbers...Zach.");
                 }
             }
             else
             {
-                MessageBox.Show("No Quanitity OR No Item Selected.");
+                MessageBox.Show("Invalid Quanitity OR Item Selected.");
             }
-
-        }
+        }//confirm event handler.
         void ClearRecipe_Click(object sender, EventArgs e)
         {
             Console.WriteLine("ClearClicked");
             Forms_ListBoxes[1].Items.Clear();//clears listbox
-        }
+        }//Clears the recipe listbox
         void Complete_Click(object sender, EventArgs e)
         {
-            if (Forms_ListBoxes[1].SelectedItem != null && Forms_ListBoxes[1].Items.Count > 0 && Forms_TextBoxes[3].Text != "" || Forms_TextBoxes[3].Text != null)
+            if (Forms_ListBoxes[1].SelectedItem != null && Forms_ListBoxes[1].Items.Count > 0 && Forms_TextBoxes[3].Text != "" || Forms_TextBoxes[3].Text != null || Forms_TextBoxes[3].Text == "i^2")
             {
-
-                try
+                if (!(Forms_TextBoxes[3].Text == "i^2"))
                 {
-
-
-
-
-                    float Quantitys = 0;
-                    float servingSize = float.Parse(Forms_TextBoxes[3].Text);
-                    float servings = Quantitys / servingSize;
-                    var Per100Grams = new float[9];
-                    var AverageSize = new float[9];
-                    /*
-                   0 Food ID
-        1 Food name
-        2 Energy (kJ)
-        3 Protein (g)
-        4 Fat, total (g)
-        5 Fat, saturated (g)
-        6 Available carbohydrate (g)
-        7 Total sugars (g)
-        8 Sodium (mg)
-                     */
-                    foreach (Ingredient s in Forms_ListBoxes[1].Items)
+                    try//try is to find if serving size is a float.
                     {
-                        Quantitys += s.Quantity;
-                    }
+                        float Quantitys = 0;
 
-                    Console.WriteLine("CompleteClicked");
-                    int b;
-                    foreach (Ingredient s in Forms_ListBoxes[1].Items)
-                    {
-                        b = 0;
-                        //Energy, Protein, FatTotal, FatSat, Carbs, Sodium, Sugar
-                        Per100Grams[b] += s.FEnergy * (s.Quantity / Quantitys);
-                        b++;
-                        Per100Grams[b] += s.FProtein * (s.Quantity / Quantitys);
-                        b++;
-                        Per100Grams[b] += s.FFatTotal * (s.Quantity / Quantitys);
-                        b++;
-                        Per100Grams[b] += s.FSat * (s.Quantity / Quantitys);
-                        b++;
-                        Per100Grams[b] += s.FCarb * (s.Quantity / Quantitys);
-                        b++;
-                        Per100Grams[b] += s.FSug * (s.Quantity / Quantitys);
-                        b++;
-                        Per100Grams[b] += s.FSodium * (s.Quantity / Quantitys);
-
-
-                    }
-
-                    foreach (Ingredient s in Forms_ListBoxes[1].Items)
-                    {
-                        //Energy, Protein, FatTotal, FatSat, Carbs, Sodium, Sugar
-                        for (b = 0; b < Per100Grams.Count(); b++)
+                        float servingSize = float.Parse(Forms_TextBoxes[3].Text);
+                        float servings = Quantitys / servingSize;
+                        var Per100Grams = new float[9];
+                        var AverageSize = new float[9];
+                        /*
+                       0 Food ID
+            1 Food name
+            2 Energy (kJ)
+            3 Protein (g)
+            4 Fat, total (g)
+            5 Fat, saturated (g)
+            6 Available carbohydrate (g)
+            7 Total sugars (g)
+            8 Sodium (mg)
+                         */
+                        foreach (Ingredient s in Forms_ListBoxes[1].Items)
                         {
-                            AverageSize[b] += Per100Grams[b] * (servingSize / 100);//loops through each entry and applys the average calculation.                            
+                            Quantitys += s.Quantity;
                         }
+                        Console.WriteLine("CompleteClicked");
+                        int b;
+                        foreach (Ingredient s in Forms_ListBoxes[1].Items)
+                        {
+                            b = 0;
+                            //Energy, Protein, FatTotal, FatSat, Carbs, Sodium, Sugar
+                            Per100Grams[b] += s.FEnergy * (s.Quantity / Quantitys);//adds calculations to the listbox.
+                            b++;
+                            Per100Grams[b] += s.FProtein * (s.Quantity / Quantitys);
+                            b++;
+                            Per100Grams[b] += s.FFatTotal * (s.Quantity / Quantitys);
+                            b++;
+                            Per100Grams[b] += s.FSat * (s.Quantity / Quantitys);
+                            b++;
+                            Per100Grams[b] += s.FCarb * (s.Quantity / Quantitys);
+                            b++;
+                            Per100Grams[b] += s.FSug * (s.Quantity / Quantitys);
+                            b++;
+                            Per100Grams[b] += s.FSodium * (s.Quantity / Quantitys);
+                        }
+
+                        foreach (Ingredient s in Forms_ListBoxes[1].Items)
+                        {
+                            //Energy, Protein, FatTotal, FatSat, Carbs, Sodium, Sugar
+                            for (b = 0; b < Per100Grams.Count(); b++)
+                            {
+                                AverageSize[b] += Per100Grams[b] * (servingSize / 100);//loops through each entry and applys the average calculation.                            
+                            }
+                        }
+                        DrawNutrientsTable(Per100Grams, AverageSize);
                     }
 
 
 
-                    DrawNutrientsTable(Per100Grams, AverageSize);
-
-
-
-
+                    catch
+                    {
+                        MessageBox.Show("Serving size must be a number.");
+                    }
                 }
-                catch
+                else
                 {
-                    MessageBox.Show("Serving size must be a number.");
-
+                    MessageBox.Show("Zach, I am not a Graphics Calculator.");
                 }
             }
             else
             {
                 MessageBox.Show("No item selected, or no serving size.");
             }
-
         }
-
         #endregion
+
         public void DrawNutrientsTable(float[] Per100g, float[] avg)
         {
             try
@@ -402,10 +453,7 @@ namespace Nutrition_AS3._7
                 {
                     a.Hide();
                 }
-
-
                 string[] NutritionSubjects = new string[] { "Energy", "Protein", "Fat, Total", " -Saturated Fat", "Carbohydrates", "Sugars", "Sodium" };
-
                 g.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, formwidth, formheight));
                 g.DrawString(Recipe_Name_String, new Font("Arial", 16), new SolidBrush(Color.White), 0, 0);
                 for (int i = 1; i < 8; i++)
@@ -422,61 +470,42 @@ namespace Nutrition_AS3._7
                 {
                     g.DrawString(avg[i - 1].ToString(), new Font("Arial", 10), new SolidBrush(Color.White), 400, i * 40);
                 }
-
             }
             catch
             {
                 throw new Exception();
             }
         }
+
+        #region KeyDown
         public void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
         {
-
             if (e.KeyCode == Keys.Enter)
             {
-
                 Forms_Buttons[0].PerformClick();
-
             }
         }
-
         public void RecipeName_KeyDown(object sender, KeyEventArgs e)
         {
-
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter && (Forms_TextBoxes[2].Text != "" || Forms_TextBoxes[2].Text != null))
             {
-
-                try
+                //checks for special characters or errors
+                Recipe_Name_String = Forms_TextBoxes[2].Text;
+                foreach (char a in SpecialChars)
                 {
-                    //checks for special characters or errors
-                    Recipe_Name_String = Forms_TextBoxes[2].Text;
-                    foreach (char a in SpecialChars)
+                    if (!Recipe_Name_String.Contains(a))
                     {
-                        if (!Recipe_Name_String.Contains(a))
-                        {
-                            Forms_TextBoxes[2].Hide();
-                            AddItems();
-                        }
-                        else
-                        {
-                            MessageBox.Show("Only AlphaNumerics and \",.()-_\" are allowed.");
-                        }
-
-
+                        Forms_TextBoxes[2].Hide();
+                        AddItems();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Only AlphaNumerics and \",.()-_\" are allowed.");
                     }
                 }
-                catch
-                {
-                    MessageBox.Show("Recipe Name error has occured.");
-                }
-
             }
-
-
-
-
-
         }
+        #endregion
 
         static void OpenFile()
         {
@@ -521,25 +550,13 @@ namespace Nutrition_AS3._7
             Console.WriteLine();
 
 
-        }
-
+        }//Reads the file and inputs each ingredient.
     }
 }
-
-
-
 /*
-
-
-
-
     <-----Need2Do--->
 Labels
-
 Add method references.
-
 Add proper code for filepath (In openfile method), so "Nutrients.txt" gets opened.
-
 Tidy up the ordering.
-
 */
