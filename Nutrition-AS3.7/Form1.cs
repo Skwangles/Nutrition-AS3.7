@@ -83,6 +83,8 @@ namespace Nutrition_AS3._7
             this.Height = formheight;
             this.Width = formwidth;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
 
             //TbSearch, tbQuanitiy, TbRecipe, BSearch,BConfirm,BClearRecipe,LQuanity, LRecipeName, LSearchResults,LTitle
             Forms_TextBoxes[0] = new TextBox();  //Tb Search
