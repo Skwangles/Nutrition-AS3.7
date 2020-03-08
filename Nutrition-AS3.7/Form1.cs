@@ -35,7 +35,7 @@ namespace Nutrition_AS3._7
         int RecipeContentsheight = 300;
         int QuanitityTBMaxLength = 5;
         int QuantityBoxWidth = 30;
-        int ServingSizeWidth = 20;
+        int ServingSizeWidth = 40;
         bool isSearching = false;
         bool containsSpecialCaps = false;
         Color ButtonsColor = SystemColors.ButtonFace;
@@ -85,6 +85,7 @@ namespace Nutrition_AS3._7
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+
 
             //TbSearch, tbQuanitiy, TbRecipe, BSearch,BConfirm,BClearRecipe,LQuanity, LRecipeName, LSearchResults,LTitle
             Forms_TextBoxes[0] = new TextBox();  //Tb Search
@@ -154,6 +155,7 @@ namespace Nutrition_AS3._7
             //changing locations of each item.
 
             //locks the search button to the search bar
+            //search box
             Forms_TextBoxes[0].Left = SearchBarLeft;
             Forms_TextBoxes[0].Top = Default_Spacer;
             Forms_TextBoxes[0].Width = Forms_ListBoxes[0].Width;
@@ -172,25 +174,25 @@ namespace Nutrition_AS3._7
             Forms_ListBoxes[0].Height = RecipeContentsheight;
             Forms_ListBoxes[0].Width = SearchResultsWidth;
             Forms_ListBoxes[0].HorizontalScrollbar = true;
-
+            Forms_ListBoxes[0].Font = new Font(FontFamily.GenericSerif, 10);
+            
 
             //Clear Button
             Forms_Buttons[2].Left = this.Width - Forms_Buttons[2].Width - 1;
             Forms_Buttons[2].Text = "Clear";
             Forms_Buttons[2].BackColor = ButtonsColor;
 
+            //Quanitity textbox
+            Forms_TextBoxes[1].Width = QuantityBoxWidth;           
+            Forms_TextBoxes[1].MaxLength = QuanitityTBMaxLength;
+            Forms_TextBoxes[1].Top = Forms_ListBoxes[0].Top; //locks confirm button to the Listbox results
+            Forms_TextBoxes[1].Left = Forms_ListBoxes[0].Left + Forms_ListBoxes[0].Width + Default_Spacer;
+
             //Confirm Button
-            Forms_Buttons[1].Top = Forms_ListBoxes[0].Top; //locks confirm button to the Listbox results
-            Forms_Buttons[1].Left = Forms_ListBoxes[0].Left + Forms_ListBoxes[0].Width + Default_Spacer;
+            Forms_Buttons[1].Left = Forms_TextBoxes[1].Left;//makes quanitity below the 
+            Forms_Buttons[1].Top = Forms_TextBoxes[1].Top + Forms_TextBoxes[1].Height;
             Forms_Buttons[1].Text = "Confirm";
             Forms_Buttons[1].BackColor = ButtonsColor;
-
-
-            //Quanitity textbox
-            Forms_TextBoxes[1].Width = QuantityBoxWidth;
-            Forms_TextBoxes[1].Left = Forms_Buttons[1].Left;//makes quanitity below the 
-            Forms_TextBoxes[1].Top = Forms_Buttons[1].Top + Forms_Buttons[1].Height;
-            Forms_TextBoxes[1].MaxLength = QuanitityTBMaxLength;
 
             //Recipe contents
             Forms_ListBoxes[1].Height = RecipeContentsheight;
@@ -198,32 +200,30 @@ namespace Nutrition_AS3._7
             Forms_ListBoxes[1].Top = Forms_Buttons[2].Top + Forms_Buttons[2].Height + Default_Spacer;
             Forms_ListBoxes[1].Left = this.Width - Forms_ListBoxes[1].Width;
             Forms_ListBoxes[1].HorizontalScrollbar = true;
+            Forms_ListBoxes[1].Font = new Font(FontFamily.GenericSerif, 10);
 
-
+            //Serving size
+            Forms_TextBoxes[3].Top = Forms_ListBoxes[1].Top + Forms_ListBoxes[1].Height + Default_Spacer;
+            Forms_TextBoxes[3].Left = Forms_ListBoxes[1].Left;           
+            Forms_TextBoxes[3].MaxLength = 3;
+            Forms_TextBoxes[3].Width = ServingSizeWidth;
+            Forms_TextBoxes[3].Font = new Font("Ariel", 16);
 
             //complete button
-            Forms_Buttons[3].Top = Forms_ListBoxes[1].Top + Forms_ListBoxes[1].Height + Default_Spacer;
+            Forms_Buttons[3].Top = Forms_TextBoxes[3].Top + Forms_TextBoxes[3].Height;
             Forms_Buttons[3].Left = Forms_ListBoxes[1].Left;
             Forms_Buttons[3].Text = "Complete Recipe";
             Forms_Buttons[3].BackColor = ButtonsColor;
 
-            //Serving size
-            Forms_TextBoxes[3].Top = Forms_Buttons[3].Top + Forms_Buttons[3].Height;
-            Forms_TextBoxes[3].Left = Forms_ListBoxes[1].Left;
-            Forms_TextBoxes[3].MaxLength = 3;
-            Forms_TextBoxes[3].Width = ServingSizeWidth;
-
-            //LQuantity
-            //Recipe Name
-
+           
 
             //Quantity Label
             Forms_Labels[0].Left = Forms_TextBoxes[1].Left + Forms_TextBoxes[1].Width;
-            Forms_Labels[0].Top = Forms_Buttons[1].Top + Forms_Buttons[1].Height;
+            Forms_Labels[0].Top = Forms_TextBoxes[1].Top;
             Forms_Labels[0].Text = "(g)Quantity";
             Forms_Labels[0].Width = 75;
 
-            //Quantity Label
+            //RecipeName Label
             Forms_Labels[1].Left = Forms_ListBoxes[1].Left;
             Forms_Labels[1].Top = Forms_ListBoxes[1].Top - Forms_Labels[1].Height;
             Forms_Labels[1].Width = Forms_ListBoxes[1].Width;
@@ -324,22 +324,24 @@ namespace Nutrition_AS3._7
         void Confirm_Click(object sender, EventArgs e)
         {
             Console.WriteLine("ConfirmClicked");
-            if (Forms_TextBoxes[1].Text != "" || Forms_TextBoxes[1].Text != null && Forms_ListBoxes[0].SelectedItem != null)
+            if ((Forms_TextBoxes[1].Text != "" || Forms_TextBoxes[1].Text != null) && Forms_ListBoxes[0].SelectedItem != null && Forms_TextBoxes[1].Text != "0")//checks if empty, or if the number is 0 as serving size cannot be 0g
             {
                 containsSpecialCaps = false;
                 foreach (char a in AllSpecialChars)
                 {
-                    if (Forms_TextBoxes[3].Text.Contains(a))
+                    if (Forms_TextBoxes[1].Text.Contains(a))
                     {
                         containsSpecialCaps = true;
                     }
                 }
-                if (!Forms_TextBoxes[3].Text.Contains("i"))
+                if (!containsSpecialCaps)
                 {
                     try
                     {
                         ((Ingredient)Forms_ListBoxes[0].SelectedItem).Quantity = float.Parse(Forms_TextBoxes[1].Text);//adds the quanitity added
                         Forms_ListBoxes[1].Items.Add((Ingredient)Forms_ListBoxes[0].SelectedItem);//adds to the recipe list.
+                        Forms_TextBoxes[0].Text = "";
+                        Forms_TextBoxes[1].Text = "";//so textboxes are ready for next ingredient.
                     }
                     catch
                     {
@@ -349,7 +351,7 @@ namespace Nutrition_AS3._7
                 }
                 else
                 {
-                    MessageBox.Show("I do not accept letters, or Complex numbers...Zach.");
+                    MessageBox.Show("No special characters.");
                 }
             }
             else
@@ -364,9 +366,17 @@ namespace Nutrition_AS3._7
         }//Clears the recipe listbox
         void Complete_Click(object sender, EventArgs e)
         {
-            if (Forms_ListBoxes[1].SelectedItem != null && Forms_ListBoxes[1].Items.Count > 0 && Forms_TextBoxes[3].Text != "" || Forms_TextBoxes[3].Text != null || Forms_TextBoxes[3].Text == "i^2")
+            if (Forms_ListBoxes[1].Items.Count > 0 && Forms_TextBoxes[3].Text != "" && Forms_TextBoxes[3].Text != null && Forms_TextBoxes[3].Text != "0")
             {
-                if (!(Forms_TextBoxes[3].Text == "i^2"))
+                containsSpecialCaps = false;
+                foreach (char a in AllSpecialChars)
+                {
+                    if (Forms_TextBoxes[3].Text.Contains(a))
+                    {
+                        containsSpecialCaps = true;
+                    }
+                }
+                if (!containsSpecialCaps)
                 {
                     try//try is to find if serving size is a float.
                     {
@@ -432,7 +442,7 @@ namespace Nutrition_AS3._7
                 }
                 else
                 {
-                    MessageBox.Show("Zach, I am not a Graphics Calculator.");
+                    MessageBox.Show("Positive numbers only. (>0)");
                 }
             }
             else
@@ -465,12 +475,12 @@ namespace Nutrition_AS3._7
                 g.DrawString("Per 100 Grams", new Font("Arial", 16), new SolidBrush(Color.White), 200, 0);
                 for (int i = 1; i < Per100g.Length - 1; i++)
                 {
-                    g.DrawString(Per100g[i - 1].ToString(), new Font("Arial", 10), new SolidBrush(Color.White), 200, i * 40);
+                    g.DrawString(Math.Round(Per100g[i - 1],2).ToString(), new Font("Arial", 10), new SolidBrush(Color.White), 200, i * 40);
                 }
                 g.DrawString("Average serving size", new Font("Arial", 16), new SolidBrush(Color.White), 400, 0);
                 for (int i = 1; i < avg.Length - 1; i++)
                 {
-                    g.DrawString(avg[i - 1].ToString(), new Font("Arial", 10), new SolidBrush(Color.White), 400, i * 40);
+                    g.DrawString(Math.Round(avg[i - 1], 2).ToString(), new Font("Arial", 10), new SolidBrush(Color.White), 400, i * 40);
                 }
             }
             catch
