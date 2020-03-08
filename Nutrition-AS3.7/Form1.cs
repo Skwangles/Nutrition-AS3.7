@@ -159,6 +159,7 @@ namespace Nutrition_AS3._7
             Forms_TextBoxes[0].Left = SearchBarLeft;
             Forms_TextBoxes[0].Top = Default_Spacer;
             Forms_TextBoxes[0].Width = Forms_ListBoxes[0].Width;
+            Forms_TextBoxes[0].BackColor = Color.LightGray;
 
             //Searchbutton
             Forms_Buttons[0].Left = Forms_TextBoxes[0].Left + Forms_TextBoxes[0].Width + Default_Spacer;
@@ -175,7 +176,7 @@ namespace Nutrition_AS3._7
             Forms_ListBoxes[0].Width = SearchResultsWidth;
             Forms_ListBoxes[0].HorizontalScrollbar = true;
             Forms_ListBoxes[0].Font = new Font(FontFamily.GenericSerif, 10);
-            
+
 
             //Clear Button
             Forms_Buttons[2].Left = this.Width - Forms_Buttons[2].Width - 1;
@@ -183,10 +184,11 @@ namespace Nutrition_AS3._7
             Forms_Buttons[2].BackColor = ButtonsColor;
 
             //Quanitity textbox
-            Forms_TextBoxes[1].Width = QuantityBoxWidth;           
+            Forms_TextBoxes[1].Width = QuantityBoxWidth;
             Forms_TextBoxes[1].MaxLength = QuanitityTBMaxLength;
             Forms_TextBoxes[1].Top = Forms_ListBoxes[0].Top; //locks confirm button to the Listbox results
             Forms_TextBoxes[1].Left = Forms_ListBoxes[0].Left + Forms_ListBoxes[0].Width + Default_Spacer;
+            Forms_TextBoxes[1].BackColor = Color.LightGray;
 
             //Confirm Button
             Forms_Buttons[1].Left = Forms_TextBoxes[1].Left;//makes quanitity below the 
@@ -202,12 +204,13 @@ namespace Nutrition_AS3._7
             Forms_ListBoxes[1].HorizontalScrollbar = true;
             Forms_ListBoxes[1].Font = new Font(FontFamily.GenericSerif, 10);
 
-            //Serving size
+            //Serving size textbox
             Forms_TextBoxes[3].Top = Forms_ListBoxes[1].Top + Forms_ListBoxes[1].Height + Default_Spacer;
-            Forms_TextBoxes[3].Left = Forms_ListBoxes[1].Left;           
+            Forms_TextBoxes[3].Left = Forms_ListBoxes[1].Left;
             Forms_TextBoxes[3].MaxLength = 3;
             Forms_TextBoxes[3].Width = ServingSizeWidth;
             Forms_TextBoxes[3].Font = new Font("Ariel", 16);
+            Forms_TextBoxes[3].BackColor = Color.LightGray;
 
             //complete button
             Forms_Buttons[3].Top = Forms_TextBoxes[3].Top + Forms_TextBoxes[3].Height;
@@ -215,7 +218,7 @@ namespace Nutrition_AS3._7
             Forms_Buttons[3].Text = "Complete Recipe";
             Forms_Buttons[3].BackColor = ButtonsColor;
 
-           
+
 
             //Quantity Label
             Forms_Labels[0].Left = Forms_TextBoxes[1].Left + Forms_TextBoxes[1].Width;
@@ -475,7 +478,7 @@ namespace Nutrition_AS3._7
                 g.DrawString("Per 100 Grams", new Font("Arial", 16), new SolidBrush(Color.White), 200, 0);
                 for (int i = 1; i < Per100g.Length - 1; i++)
                 {
-                    g.DrawString(Math.Round(Per100g[i - 1],2).ToString(), new Font("Arial", 10), new SolidBrush(Color.White), 200, i * 40);
+                    g.DrawString(Math.Round(Per100g[i - 1], 2).ToString(), new Font("Arial", 10), new SolidBrush(Color.White), 200, i * 40);
                 }
                 g.DrawString("Average serving size", new Font("Arial", 16), new SolidBrush(Color.White), 400, 0);
                 for (int i = 1; i < avg.Length - 1; i++)
