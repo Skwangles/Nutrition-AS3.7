@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 
@@ -21,7 +17,7 @@ namespace Nutrition_AS3._7
         Graphics g;
         #region Default Values and Arrays
         //sets the integers and arrays
-        readonly static string filepath = @"c:\Users\tree_\Downloads\"; //file path
+        //file path
         readonly static int formwidth = 700;
         readonly int formheight = 500;
         public TextBox[] Forms_TextBoxes = new TextBox[11]; //stores the instances of textboxes
@@ -64,6 +60,9 @@ namespace Nutrition_AS3._7
         {
             Controls.Add(Forms_TextBoxes[2]);
             Forms_TextBoxes[2].KeyDown += new KeyEventHandler(RecipeName_KeyDown);
+
+            //makes sure the form doesn't move.
+            
             Forms_TextBoxes[2].Text = "Enter Recipe Name";
             Forms_TextBoxes[2].Left = 0;
             Forms_TextBoxes[2].Top = 0;
@@ -76,15 +75,19 @@ namespace Nutrition_AS3._7
 
         }//Runs the method to get the recipe name.
 
+
         #region Setup Processes
         void Setup()
         {
             //uses the softvalues to setup the form
+            this.FormBorderStyle = FormBorderStyle.None;
             this.Height = formheight;
             this.Width = formwidth;
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+           
+            
 
 
             //TbSearch, tbQuanitiy, TbRecipe, BSearch,BConfirm,BClearRecipe,LQuanity, LRecipeName, LSearchResults,LTitle
@@ -348,17 +351,22 @@ namespace Nutrition_AS3._7
                     }
                     catch
                     {
+                        Forms_TextBoxes[0].Text = "";
+                        Forms_TextBoxes[1].Text = "";//so textboxes are ready for next ingredient.
                         MessageBox.Show("Invalid item selected OR Quanitity must be a number >0");
                     }
-
                 }
                 else
                 {
+                    Forms_TextBoxes[0].Text = "";
+                    Forms_TextBoxes[1].Text = "";//so textboxes are ready for next ingredient.
                     MessageBox.Show("No special characters.");
                 }
             }
             else
             {
+                Forms_TextBoxes[0].Text = "";
+                Forms_TextBoxes[1].Text = "";//so textboxes are ready for next ingredient.
                 MessageBox.Show("Invalid Quanitity OR Item Selected.");
             }
         }//confirm event handler.
@@ -468,6 +476,7 @@ namespace Nutrition_AS3._7
                 {
                     a.Hide();
                 }
+                g.Clear(Color.Black);
                 string[] NutritionSubjects = new string[] { "Energy", "Protein", "Fat, Total", " -Saturated Fat", "Carbohydrates", "Sugars", "Sodium" };
                 g.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, formwidth, formheight));
                 g.DrawString(Recipe_Name_String, new Font("Arial", 16), new SolidBrush(Color.White), 0, 0);
@@ -506,17 +515,24 @@ namespace Nutrition_AS3._7
             {
                 //checks for special characters or errors
                 Recipe_Name_String = Forms_TextBoxes[2].Text;
+                containsSpecialCaps = false;
                 foreach (char a in SpecialChars)
                 {
-                    if (!Recipe_Name_String.Contains(a))
+                    if (Forms_TextBoxes[2].Text.Contains(a))
                     {
-                        Forms_TextBoxes[2].Hide();
-                        AddItems();
+                        containsSpecialCaps = true;
                     }
-                    else
-                    {
-                        MessageBox.Show("Only AlphaNumerics and \",.()-_\" are allowed.");
-                    }
+                }
+                if (!containsSpecialCaps)
+                {
+                    Forms_TextBoxes[2].Hide();
+                    AddItems();
+                }
+                else
+                {
+                    Forms_TextBoxes[2].Text = "Recipe Name Here";
+                    MessageBox.Show("Only AlphaNumerics and \",.()-_\" are allowed.");
+
                 }
             }
         }
@@ -528,7 +544,7 @@ namespace Nutrition_AS3._7
 
             //Open Nutrient file 
             string filename = "Nutrientfile.txt";
-            StreamReader reader = File.OpenText(filepath + filename);
+            StreamReader reader = File.OpenText(filename);
 
 
             int i = 0;//Skip the very first line, which says the layout
