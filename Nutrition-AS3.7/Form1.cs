@@ -59,20 +59,27 @@ namespace Nutrition_AS3._7
         void Recipe_Name()
         {
             Controls.Add(Forms_TextBoxes[2]);
+            Controls.Add(Forms_Buttons[4]);
+            Forms_Buttons[4].Click += new EventHandler(Exit_Click);
             Forms_TextBoxes[2].KeyDown += new KeyEventHandler(RecipeName_KeyDown);
 
-            //makes sure the form doesn't move.
-            
-            Forms_TextBoxes[2].Text = "Enter Recipe Name";
+            //Exit Button
+            Forms_Buttons[4].Text = "Exit Program";
+            Forms_Buttons[4].BackColor = Color.Red;
+            Forms_Buttons[4].Location = new Point(0, this.Height - Forms_Buttons[4].Height);
+
+
+            //Recipe Name TextBox
             Forms_TextBoxes[2].Left = 0;
             Forms_TextBoxes[2].Top = 0;
+            //---textproperties
             Forms_TextBoxes[2].AutoSize = true;
+            Forms_TextBoxes[2].Text = "Enter Recipe Name";
             Forms_TextBoxes[2].Font = new Font("Arial", 16);
-            //Recipe Name Textbox 
             Forms_TextBoxes[2].ClientSize = new Size(this.Width, 100);
             Forms_TextBoxes[2].TextAlign = HorizontalAlignment.Center;
             Forms_TextBoxes[2].MaxLength = 30;//doesnt need to be any longer
-
+            //---
         }//Runs the method to get the recipe name.
 
 
@@ -83,11 +90,13 @@ namespace Nutrition_AS3._7
             this.FormBorderStyle = FormBorderStyle.None;
             this.Height = formheight;
             this.Width = formwidth;
-            
+
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-           
-            
+            this.Name = "Nutrient Calculator";
+            this.Icon = null;
+
+
 
 
             //TbSearch, tbQuanitiy, TbRecipe, BSearch,BConfirm,BClearRecipe,LQuanity, LRecipeName, LSearchResults,LTitle
@@ -99,6 +108,8 @@ namespace Nutrition_AS3._7
             Forms_Buttons[1] = new Button();   //B Confirm
             Forms_Buttons[2] = new Button();   //B Clear Recipe
             Forms_Buttons[3] = new Button();   //B Complete Recipe
+            Forms_Buttons[4] = new Button();   //B Exit 
+
             Forms_Labels[0] = new Label();    //LQuantity
             Forms_Labels[1] = new Label();    //LRecipe Name
             Forms_Labels[2] = new Label();    //LSearch Results
@@ -114,7 +125,7 @@ namespace Nutrition_AS3._7
                 int a = 0;//As  Recipe Textbox has already been added, is skipped(Index of it is 2)
                 foreach (TextBox b in Forms_TextBoxes)
                 {
-                    if (a != 2)
+                    if (a != 2 && a != 4)
                     {
                         Controls.Add(b);
                         a++;
@@ -137,25 +148,91 @@ namespace Nutrition_AS3._7
                     Controls.Add(b);
                 }
                 //Event Handlers
-
+                #region create eventhandlers
                 Forms_Buttons[0].Click += new EventHandler(Search_Click);
                 Forms_Buttons[1].Click += new EventHandler(Confirm_Click);
                 Forms_Buttons[2].Click += new EventHandler(ClearRecipe_Click);
                 Forms_Buttons[3].Click += new EventHandler(Complete_Click);
                 Forms_TextBoxes[0].KeyDown += new KeyEventHandler(SearchTextBox_KeyDown);//checks for the "enter" key in hte textbox
+
+
+                Forms_Buttons[0].MouseHover += new EventHandler(Button1_MouseHover);
+                Forms_Buttons[1].MouseHover += new EventHandler(Button2_MouseHover);
+                Forms_Buttons[2].MouseHover += new EventHandler(Button3_MouseHover);
+                Forms_Buttons[3].MouseHover += new EventHandler(Button4_MouseHover);
+                Forms_Buttons[4].MouseHover += new EventHandler(Button5_MouseHover);
+                Forms_Buttons[0].MouseLeave += new EventHandler(Button1_MouseLeave);
+                Forms_Buttons[1].MouseLeave += new EventHandler(Button2_MouseLeave);
+                Forms_Buttons[2].MouseLeave += new EventHandler(Button3_MouseLeave);
+                Forms_Buttons[3].MouseLeave += new EventHandler(Button4_MouseLeave);
+                Forms_Buttons[4].MouseLeave += new EventHandler(Button5_MouseLeave);
+                #endregion
                 hasCalled = true;
                 Forms_TextBoxes[0].Focus();//Focuses the cursour on the search bar
                 this.BackColor = Color.Beige;
+
 
                 Setlocations();//in seperate method so later locations may be updated.
 
 
             }
         }//adds items to controls
+
+        #region MouseHover/Leave
+        void Button1_MouseHover(object sender, EventArgs e)
+        {
+            
+        }
+        void Button1_MouseLeave(object sender, EventArgs e)
+        {
+            
+        }
+        void Button2_MouseHover(object sender, EventArgs e)
+        {
+           
+        }
+        void Button2_MouseLeave(object sender, EventArgs e)
+        {
+            
+        }
+
+        void Button3_MouseHover(object sender, EventArgs e)
+        {
+            
+        }
+        void Button3_MouseLeave(object sender, EventArgs e)
+        {
+            
+        }
+
+        void Button4_MouseHover(object sender, EventArgs e)
+        {
+            
+        }
+
+        void Button4_MouseLeave(object sender, EventArgs e)
+        {
+            
+        }
+        void Button5_MouseHover(object sender, EventArgs e)
+        {
+           
+        }
+
+        void Button5_MouseLeave(object sender, EventArgs e)
+        {
+            
+        }
+        #endregion
         void Setlocations()
         {
 
             //changing locations of each item.
+            for (int m = 0; m < 4; m++)
+            {
+                Forms_Buttons[m].UseVisualStyleBackColor = true;
+                Forms_Buttons[m].FlatStyle = 0;
+            }
 
             //locks the search button to the search bar
             //search box
@@ -246,10 +323,7 @@ namespace Nutrition_AS3._7
             Forms_Labels[3].Top = Forms_TextBoxes[3].Top;
             Forms_Labels[3].Text = "Serving Size";
 
-            Forms_Buttons[0].UseVisualStyleBackColor = true;
-            Forms_Buttons[1].UseVisualStyleBackColor = true;
-            Forms_Buttons[2].UseVisualStyleBackColor = true;
-            Forms_Buttons[3].UseVisualStyleBackColor = true;
+
 
             foreach (TextBox a in Forms_TextBoxes)
             {
@@ -272,6 +346,10 @@ namespace Nutrition_AS3._7
         #endregion
 
         #region Event Handlers
+        void Exit_Click(object sender, EventArgs e)
+        {
+            Environment.Exit(0);
+        }
         void Search_Click(object sender, EventArgs e)
         {
             if (!isSearching)
