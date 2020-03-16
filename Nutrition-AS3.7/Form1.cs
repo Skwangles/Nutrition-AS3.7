@@ -13,6 +13,7 @@ namespace Nutrition_AS3._7
         {
             InitializeComponent();
             g = this.CreateGraphics();
+
         }
         Graphics g;
         #region Default Values and Arrays
@@ -20,24 +21,25 @@ namespace Nutrition_AS3._7
         //file path
         readonly static int formwidth = 700;
         readonly int formheight = 500;
-        public TextBox[] Forms_TextBoxes = new TextBox[11]; //stores the instances of textboxes
-        public Button[] Forms_Buttons = new Button[11];//stores the instances of Buttons
-        public Label[] Forms_Labels = new Label[11]; //stores the instances of Labels
-        public ListBox[] Forms_ListBoxes = new ListBox[11]; //stores the instances of Listboxes
+        public TextBox[] Forms_TextBoxes = new TextBox[5]; //stores the instances of textboxes
+        public Button[] Forms_Buttons = new Button[5];//stores the instances of Buttons
+        public Label[] Forms_Labels = new Label[4]; //stores the instances of Labels
+        public ListBox[] Forms_ListBoxes = new ListBox[2]; //stores the instances of Listboxes
         bool hasCalled = false; //checks if the eventhandler creator and controls add has occured
-        int Default_Spacer = 30; //For spacing
-        int SearchResultsWidth = 280; //Sets size of search results box
-        int SearchBarLeft = 0; //the left of item whic
-        int RecipeContentsheight = 300;
-        int QuanitityTBMaxLength = 5;
-        int QuantityBoxWidth = 30;
-        int ServingSizeWidth = 40;
+        bool hadNoItems = false;
         bool isSearching = false;
         bool containsSpecialCaps = false;
-        Color ButtonsColor = SystemColors.ButtonFace;
-        string Recipe_Name_String;
-        string SpecialChars = "!@#$%^&*~`=+[{]}\\|;:'\"<>/?";
-        string AllSpecialChars = "\",.()-_\"!@#$%^&*~`=+[{]}\\|;:'\"<>/?";
+        int default_Spacer = 30; //For spacing
+        int searchResultsWidth = 280; //Sets size of search results box
+        int searchBarLeft = 2; //the left of item whic        
+        int quanitityTBMaxLength = 5;
+        int quantityBoxWidth = 30;
+        int servingSizeWidth = 40;
+        int moveDown = 40;//move down controls to put in exit button        
+        Color buttonsColor = SystemColors.ButtonFace;
+        string recipe_Name_String;
+        string specialChars = "!@#$%^&*~`=+[{]}\\|;:'\"<>/?";
+        string allSpecialChars = "\",.()-_\"!@#$%^&*~`=+[{]}\\|;:'\"<>/?";
         //above, sets the locations of the forms items.
         static List<Ingredient> Recipies = new List<Ingredient>();
 
@@ -58,20 +60,24 @@ namespace Nutrition_AS3._7
         }//Program Starter
         void Recipe_Name()
         {
+            //Button exit handler
             Controls.Add(Forms_TextBoxes[2]);
             Controls.Add(Forms_Buttons[4]);
             Forms_Buttons[4].Click += new EventHandler(Exit_Click);
             Forms_TextBoxes[2].KeyDown += new KeyEventHandler(RecipeName_KeyDown);
 
-            //Exit Button
-            Forms_Buttons[4].Text = "Exit Program";
-            Forms_Buttons[4].BackColor = Color.Red;
-            Forms_Buttons[4].Location = new Point(0, this.Height - Forms_Buttons[4].Height);
 
+            //Exit Button
+            Forms_Buttons[4].Text = "X";
+            Forms_Buttons[4].Location = new Point(this.Width - Forms_Buttons[4].Width, 0);
+            Forms_Buttons[4].BackColor = Color.Red;
+            Forms_Buttons[4].AutoSize = true;
+            Forms_Buttons[4].UseVisualStyleBackColor = true;
+            Forms_Buttons[4].FlatStyle = 0;
 
             //Recipe Name TextBox
             Forms_TextBoxes[2].Left = 0;
-            Forms_TextBoxes[2].Top = 0;
+            Forms_TextBoxes[2].Top = 0 + moveDown;
             //---textproperties
             Forms_TextBoxes[2].AutoSize = true;
             Forms_TextBoxes[2].Text = "Enter Recipe Name";
@@ -80,7 +86,7 @@ namespace Nutrition_AS3._7
             Forms_TextBoxes[2].TextAlign = HorizontalAlignment.Center;
             Forms_TextBoxes[2].MaxLength = 30;//doesnt need to be any longer
             //---
-        }//Runs the method to get the recipe name.
+        }//Runs the method to get the recipe name. And creates EXit and Recipetextbox controls
 
 
         #region Setup Processes
@@ -93,6 +99,7 @@ namespace Nutrition_AS3._7
 
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+
             this.Name = "Nutrient Calculator";
             this.Icon = null;
 
@@ -169,9 +176,8 @@ namespace Nutrition_AS3._7
                 #endregion
                 hasCalled = true;
                 Forms_TextBoxes[0].Focus();//Focuses the cursour on the search bar
+
                 this.BackColor = Color.Beige;
-
-
                 Setlocations();//in seperate method so later locations may be updated.
 
 
@@ -181,54 +187,54 @@ namespace Nutrition_AS3._7
         #region MouseHover/Leave
         void Button1_MouseHover(object sender, EventArgs e)
         {
-            
+
         }
         void Button1_MouseLeave(object sender, EventArgs e)
         {
-            
+
         }
         void Button2_MouseHover(object sender, EventArgs e)
         {
-           
+
         }
         void Button2_MouseLeave(object sender, EventArgs e)
         {
-            
+
         }
 
         void Button3_MouseHover(object sender, EventArgs e)
         {
-            
+
         }
         void Button3_MouseLeave(object sender, EventArgs e)
         {
-            
+
         }
 
         void Button4_MouseHover(object sender, EventArgs e)
         {
-            
+
         }
 
         void Button4_MouseLeave(object sender, EventArgs e)
         {
-            
+
         }
         void Button5_MouseHover(object sender, EventArgs e)
         {
-           
+
         }
 
         void Button5_MouseLeave(object sender, EventArgs e)
         {
-            
+
         }
         #endregion
         void Setlocations()
         {
 
             //changing locations of each item.
-            for (int m = 0; m < 4; m++)
+            for (int m = 0; m < 5; m++)
             {
                 Forms_Buttons[m].UseVisualStyleBackColor = true;
                 Forms_Buttons[m].FlatStyle = 0;
@@ -236,69 +242,71 @@ namespace Nutrition_AS3._7
 
             //locks the search button to the search bar
             //search box
-            Forms_TextBoxes[0].Left = SearchBarLeft;
-            Forms_TextBoxes[0].Top = Default_Spacer;
+            Forms_TextBoxes[0].Left = searchBarLeft;
+            Forms_TextBoxes[0].Top = default_Spacer;
             Forms_TextBoxes[0].Width = Forms_ListBoxes[0].Width;
             Forms_TextBoxes[0].BackColor = Color.LightGray;
 
             //Searchbutton
-            Forms_Buttons[0].Left = Forms_TextBoxes[0].Left + Forms_TextBoxes[0].Width + Default_Spacer;
+            Forms_Buttons[0].Left = Forms_TextBoxes[0].Left + Forms_TextBoxes[0].Width + default_Spacer;
             Forms_Buttons[0].Top = Forms_TextBoxes[0].Top;
             Forms_Buttons[0].Text = "Search";
-            Forms_Buttons[0].BackColor = ButtonsColor;
+            Forms_Buttons[0].BackColor = buttonsColor;
             //----------------------------------------
             //Search results left same as search bar
 
+
             //Search Results
             Forms_ListBoxes[0].Left = Forms_TextBoxes[0].Left;//locks the top and left of Search results to Search text box
-            Forms_ListBoxes[0].Top = Forms_TextBoxes[0].Top + Default_Spacer;
-            Forms_ListBoxes[0].Height = RecipeContentsheight;
-            Forms_ListBoxes[0].Width = SearchResultsWidth;
+            Forms_ListBoxes[0].Top = Forms_TextBoxes[0].Top + default_Spacer;
+
+            int recipeContentsheight = this.Height - Forms_ListBoxes[0].Top;
+
+            Forms_ListBoxes[0].Height = recipeContentsheight;
+            Forms_ListBoxes[0].Width = searchResultsWidth;
             Forms_ListBoxes[0].HorizontalScrollbar = true;
             Forms_ListBoxes[0].Font = new Font(FontFamily.GenericSerif, 10);
 
 
             //Clear Button
-            Forms_Buttons[2].Left = this.Width - Forms_Buttons[2].Width - 1;
+            Forms_Buttons[2].Left = Forms_Buttons[4].Left - Forms_Buttons[2].Width;
             Forms_Buttons[2].Text = "Clear";
-            Forms_Buttons[2].BackColor = ButtonsColor;
+            Forms_Buttons[2].BackColor = buttonsColor;
 
             //Quanitity textbox
-            Forms_TextBoxes[1].Width = QuantityBoxWidth;
-            Forms_TextBoxes[1].MaxLength = QuanitityTBMaxLength;
+            Forms_TextBoxes[1].Width = quantityBoxWidth;
+            Forms_TextBoxes[1].MaxLength = quanitityTBMaxLength;
             Forms_TextBoxes[1].Top = Forms_ListBoxes[0].Top; //locks confirm button to the Listbox results
-            Forms_TextBoxes[1].Left = Forms_ListBoxes[0].Left + Forms_ListBoxes[0].Width + Default_Spacer;
+            Forms_TextBoxes[1].Left = Forms_ListBoxes[0].Left + Forms_ListBoxes[0].Width + default_Spacer;
             Forms_TextBoxes[1].BackColor = Color.LightGray;
 
             //Confirm Button
             Forms_Buttons[1].Left = Forms_TextBoxes[1].Left;//makes quanitity below the 
             Forms_Buttons[1].Top = Forms_TextBoxes[1].Top + Forms_TextBoxes[1].Height;
             Forms_Buttons[1].Text = "Confirm";
-            Forms_Buttons[1].BackColor = ButtonsColor;
+            Forms_Buttons[1].BackColor = buttonsColor;
 
             //Recipe contents
-            Forms_ListBoxes[1].Height = RecipeContentsheight;
-            Forms_ListBoxes[1].Width = SearchResultsWidth;
-            Forms_ListBoxes[1].Top = Forms_Buttons[2].Top + Forms_Buttons[2].Height + Default_Spacer;
-            Forms_ListBoxes[1].Left = this.Width - Forms_ListBoxes[1].Width;
+            Forms_ListBoxes[1].Height = recipeContentsheight;
+            Forms_ListBoxes[1].Width = searchResultsWidth;
+            Forms_ListBoxes[1].Top = Forms_ListBoxes[0].Top;
+            Forms_ListBoxes[1].Left = this.Width - Forms_ListBoxes[1].Width - 2;//-2 makes it not stick perfectly to the right
             Forms_ListBoxes[1].HorizontalScrollbar = true;
             Forms_ListBoxes[1].Font = new Font(FontFamily.GenericSerif, 10);
 
             //Serving size textbox
-            Forms_TextBoxes[3].Top = Forms_ListBoxes[1].Top + Forms_ListBoxes[1].Height + Default_Spacer;
-            Forms_TextBoxes[3].Left = Forms_ListBoxes[1].Left;
+            Forms_TextBoxes[3].Top = Forms_ListBoxes[1].Top + Forms_ListBoxes[1].Height - Forms_TextBoxes[3].Height - 2 * default_Spacer;
+            Forms_TextBoxes[3].Left = Forms_ListBoxes[0].Left + Forms_ListBoxes[0].Width + default_Spacer;
             Forms_TextBoxes[3].MaxLength = 3;
-            Forms_TextBoxes[3].Width = ServingSizeWidth;
+            Forms_TextBoxes[3].Width = servingSizeWidth;
             Forms_TextBoxes[3].Font = new Font("Ariel", 16);
             Forms_TextBoxes[3].BackColor = Color.LightGray;
 
             //complete button
             Forms_Buttons[3].Top = Forms_TextBoxes[3].Top + Forms_TextBoxes[3].Height;
-            Forms_Buttons[3].Left = Forms_ListBoxes[1].Left;
+            Forms_Buttons[3].Left = Forms_TextBoxes[3].Left;
             Forms_Buttons[3].Text = "Complete Recipe";
-            Forms_Buttons[3].BackColor = ButtonsColor;
-
-
+            Forms_Buttons[3].BackColor = buttonsColor;
 
             //Quantity Label
             Forms_Labels[0].Left = Forms_TextBoxes[1].Left + Forms_TextBoxes[1].Width;
@@ -310,18 +318,20 @@ namespace Nutrition_AS3._7
             Forms_Labels[1].Left = Forms_ListBoxes[1].Left;
             Forms_Labels[1].Top = Forms_ListBoxes[1].Top - Forms_Labels[1].Height;
             Forms_Labels[1].Width = Forms_ListBoxes[1].Width;
-            Forms_Labels[1].Text = Recipe_Name_String + " Ingredients";
+            Forms_Labels[1].Text = recipe_Name_String + " Ingredients";
 
             //Search Here Label
             Forms_Labels[2].Width = 100;
-            Forms_Labels[2].Left = SearchBarLeft;
+            Forms_Labels[2].Left = searchBarLeft;
             Forms_Labels[2].Top = Forms_TextBoxes[0].Top - Forms_Labels[2].Height;
             Forms_Labels[2].Text = "Search Here";
 
             //Serving Size Label
             Forms_Labels[3].Left = Forms_TextBoxes[3].Left + Forms_TextBoxes[3].Width;
             Forms_Labels[3].Top = Forms_TextBoxes[3].Top;
+
             Forms_Labels[3].Text = "Serving Size";
+            Forms_Labels[3].AutoSize = true;
 
 
 
@@ -355,14 +365,15 @@ namespace Nutrition_AS3._7
             if (!isSearching)
             {
 
-                isSearching = true;
+                hadNoItems = false;
                 Console.WriteLine("SearchClicked"); //notifies correct call
-                Forms_ListBoxes[0].Items.Clear(); //makes sure no prior searches remain
-                                                  //makes sure the entries are put in alphabetical order
+                Forms_ListBoxes[0].Items.Clear();
+                //makes sure no prior searches remain
+                //makes sure the entries are put in alphabetical order
                 if (!(Forms_TextBoxes[0].Text == "" || Forms_TextBoxes[0].Text == null)) //checks if box is empty
                 {
                     containsSpecialCaps = false;
-                    foreach (char f in SpecialChars)//checks if there are any disallowed chars in the string
+                    foreach (char f in specialChars)//checks if there are any disallowed chars in the string
                     {
                         if (!Forms_TextBoxes[0].Text.Contains(f))
                         {
@@ -389,6 +400,7 @@ namespace Nutrition_AS3._7
                                 Console.WriteLine("Not contained");
                             }
                         }
+
                     }
 
                 }
@@ -402,7 +414,7 @@ namespace Nutrition_AS3._7
             {
                 MessageBox.Show("Error with search Query");
             }
-            isSearching = false;
+
         }
         //eventhandler for search button
         void Confirm_Click(object sender, EventArgs e)
@@ -411,7 +423,7 @@ namespace Nutrition_AS3._7
             if ((Forms_TextBoxes[1].Text != "" || Forms_TextBoxes[1].Text != null) && Forms_ListBoxes[0].SelectedItem != null && Forms_TextBoxes[1].Text != "0")//checks if empty, or if the number is 0 as serving size cannot be 0g
             {
                 containsSpecialCaps = false;
-                foreach (char a in AllSpecialChars)
+                foreach (char a in allSpecialChars)
                 {
                     if (Forms_TextBoxes[1].Text.Contains(a))
                     {
@@ -458,7 +470,7 @@ namespace Nutrition_AS3._7
             if (Forms_ListBoxes[1].Items.Count > 0 && Forms_TextBoxes[3].Text != "" && Forms_TextBoxes[3].Text != null && Forms_TextBoxes[3].Text != "0")
             {
                 containsSpecialCaps = false;
-                foreach (char a in AllSpecialChars)
+                foreach (char a in allSpecialChars)
                 {
                     if (Forms_TextBoxes[3].Text.Contains(a))
                     {
@@ -557,7 +569,7 @@ namespace Nutrition_AS3._7
                 g.Clear(Color.Black);
                 string[] NutritionSubjects = new string[] { "Energy", "Protein", "Fat, Total", " -Saturated Fat", "Carbohydrates", "Sugars", "Sodium" };
                 g.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, formwidth, formheight));
-                g.DrawString(Recipe_Name_String, new Font("Arial", 16), new SolidBrush(Color.White), 0, 0);
+                g.DrawString(recipe_Name_String, new Font("Arial", 16), new SolidBrush(Color.White), 0, 0);
                 for (int i = 1; i < 8; i++)
                 {
                     g.DrawString(NutritionSubjects[i - 1], new Font("Arial", 16), new SolidBrush(Color.White), 0, i * 40);
@@ -592,9 +604,9 @@ namespace Nutrition_AS3._7
             if (e.KeyCode == Keys.Enter && (Forms_TextBoxes[2].Text != "" || Forms_TextBoxes[2].Text != null))
             {
                 //checks for special characters or errors
-                Recipe_Name_String = Forms_TextBoxes[2].Text;
+                recipe_Name_String = Forms_TextBoxes[2].Text;
                 containsSpecialCaps = false;
-                foreach (char a in SpecialChars)
+                foreach (char a in specialChars)
                 {
                     if (Forms_TextBoxes[2].Text.Contains(a))
                     {
