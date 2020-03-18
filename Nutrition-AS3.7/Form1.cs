@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.IO;
 
+
 namespace Nutrition_AS3._7
 {
     public partial class Form1 : Form
@@ -26,9 +27,10 @@ namespace Nutrition_AS3._7
         public Label[] Forms_Labels = new Label[4]; //stores the instances of Labels
         public ListBox[] Forms_ListBoxes = new ListBox[2]; //stores the instances of Listboxes
         bool hasCalled = false; //checks if the eventhandler creator and controls add has occured
-        bool hadNoItems = false;
-        bool isSearching = false;
+        bool hadItems = false;
+        
         bool containsSpecialCaps = false;
+        int recipe_Contents_Height = 300;
         int default_Spacer = 30; //For spacing
         int searchResultsWidth = 280; //Sets size of search results box
         int searchBarLeft = 2; //the left of item whic        
@@ -287,7 +289,7 @@ namespace Nutrition_AS3._7
             Forms_Buttons[1].BackColor = buttonsColor;
 
             //Recipe contents
-            Forms_ListBoxes[1].Height = recipeContentsheight;
+            Forms_ListBoxes[1].Height = recipe_Contents_Height;
             Forms_ListBoxes[1].Width = searchResultsWidth;
             Forms_ListBoxes[1].Top = Forms_ListBoxes[0].Top;
             Forms_ListBoxes[1].Left = this.Width - Forms_ListBoxes[1].Width - 2;//-2 makes it not stick perfectly to the right
@@ -295,8 +297,8 @@ namespace Nutrition_AS3._7
             Forms_ListBoxes[1].Font = new Font(FontFamily.GenericSerif, 10);
 
             //Serving size textbox
-            Forms_TextBoxes[3].Top = Forms_ListBoxes[1].Top + Forms_ListBoxes[1].Height - Forms_TextBoxes[3].Height - 2 * default_Spacer;
-            Forms_TextBoxes[3].Left = Forms_ListBoxes[0].Left + Forms_ListBoxes[0].Width + default_Spacer;
+            Forms_TextBoxes[3].Top = Forms_ListBoxes[1].Top + Forms_ListBoxes[1].Height + default_Spacer;
+            Forms_TextBoxes[3].Left = Forms_ListBoxes[1].Left;
             Forms_TextBoxes[3].MaxLength = 3;
             Forms_TextBoxes[3].Width = servingSizeWidth;
             Forms_TextBoxes[3].Font = new Font("Ariel", 16);
@@ -362,65 +364,64 @@ namespace Nutrition_AS3._7
         }
         void Search_Click(object sender, EventArgs e)
         {
-            if (!isSearching)
+
+
+            hadItems = false;
+            Console.WriteLine("SearchClicked"); //notifies correct call
+            Forms_ListBoxes[0].Items.Clear();
+            //makes sure no prior searches remain
+            //makes sure the entries are put in alphabetical order
+            if (!(Forms_TextBoxes[0].Text == "" || Forms_TextBoxes[0].Text == null)) //checks if box is empty
             {
-
-                hadNoItems = false;
-                Console.WriteLine("SearchClicked"); //notifies correct call
-                Forms_ListBoxes[0].Items.Clear();
-                //makes sure no prior searches remain
-                //makes sure the entries are put in alphabetical order
-                if (!(Forms_TextBoxes[0].Text == "" || Forms_TextBoxes[0].Text == null)) //checks if box is empty
+                containsSpecialCaps = false;
+                foreach (char f in specialChars)//checks if there are any disallowed chars in the string
                 {
-                    containsSpecialCaps = false;
-                    foreach (char f in specialChars)//checks if there are any disallowed chars in the string
+                    if (!Forms_TextBoxes[0].Text.Contains(f))
                     {
-                        if (!Forms_TextBoxes[0].Text.Contains(f))
-                        {
 
+                    }
+                    else
+                    {
+                        containsSpecialCaps = true;
+                    }
+                }
+                if (!containsSpecialCaps)
+                {
+
+
+                    Forms_ListBoxes[0].Items.Clear();
+                    foreach (Ingredient a in Recipies) //searches each item
+                    {
+                        if (a.FName.ToLower().Contains(Forms_TextBoxes[0].Text.ToLower()))//checks if search query exists, and if it is present
+                        {
+                            Forms_ListBoxes[0].Items.Add(a);
+                            hadItems = true;
                         }
                         else
                         {
-                            containsSpecialCaps = true;
+                            Console.WriteLine("Not contained");
                         }
-                    }
-                    if (!containsSpecialCaps)
-                    {
-
-
-                        Forms_ListBoxes[0].Items.Clear();
-                        foreach (Ingredient a in Recipies) //searches each item
-                        {
-                            if (a.FName.ToLower().Contains(Forms_TextBoxes[0].Text.ToLower()))//checks if search query exists, and if it is present
-                            {
-                                Forms_ListBoxes[0].Items.Add(a);
-                            }
-                            else
-                            {
-                                Console.WriteLine("Not contained");
-                            }
-                        }
-
                     }
 
                 }
-                else
+                if (!hadItems)
                 {
-                    MessageBox.Show("Only AlphaNumerics and \",.()-_\" are allowed.");//As some names contain these punctuation.
+                    Forms_ListBoxes[0].Items.Add("No Results");
                 }
-
             }
             else
             {
-                MessageBox.Show("Error with search Query");
+                MessageBox.Show("Only AlphaNumerics and \",.()-_\" are allowed.");//As some names contain these punctuation.
             }
+
+            
 
         }
         //eventhandler for search button
         void Confirm_Click(object sender, EventArgs e)
         {
             Console.WriteLine("ConfirmClicked");
-            if ((Forms_TextBoxes[1].Text != "" || Forms_TextBoxes[1].Text != null) && Forms_ListBoxes[0].SelectedItem != null && Forms_TextBoxes[1].Text != "0")//checks if empty, or if the number is 0 as serving size cannot be 0g
+            if ((Forms_TextBoxes[1].Text != "" || Forms_TextBoxes[1].Text != null) && Forms_ListBoxes[0].SelectedItem != null && Forms_TextBoxes[1].Text != "0" && hadItems == true)//checks if empty, or if the number is 0 as serving size cannot be 0g
             {
                 containsSpecialCaps = false;
                 foreach (char a in allSpecialChars)
@@ -531,6 +532,7 @@ namespace Nutrition_AS3._7
                                 AverageSize[b] += Per100Grams[b] * (servingSize / 100);//loops through each entry and applys the average calculation.                            
                             }
                         }
+                        this.BackColor = Color.Black;
                         DrawNutrientsTable(Per100Grams, AverageSize);
                     }
 
@@ -566,10 +568,13 @@ namespace Nutrition_AS3._7
                 {
                     a.Hide();
                 }
+                Forms_Buttons[4].Show();
                 g.Clear(Color.Black);
+
                 string[] NutritionSubjects = new string[] { "Energy", "Protein", "Fat, Total", " -Saturated Fat", "Carbohydrates", "Sugars", "Sodium" };
-                g.FillRectangle(new SolidBrush(Color.Black), new Rectangle(0, 0, formwidth, formheight));
+
                 g.DrawString(recipe_Name_String, new Font("Arial", 16), new SolidBrush(Color.White), 0, 0);
+
                 for (int i = 1; i < 8; i++)
                 {
                     g.DrawString(NutritionSubjects[i - 1], new Font("Arial", 16), new SolidBrush(Color.White), 0, i * 40);
@@ -584,6 +589,7 @@ namespace Nutrition_AS3._7
                 {
                     g.DrawString(Math.Round(avg[i - 1], 2).ToString(), new Font("Arial", 10), new SolidBrush(Color.White), 400, i * 40);
                 }
+
             }
             catch
             {
