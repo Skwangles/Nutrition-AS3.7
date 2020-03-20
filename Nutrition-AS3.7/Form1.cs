@@ -666,8 +666,6 @@ namespace Nutrition_AS3._7
 }
 /*
     <-----Need2Do--->
-Labels
-Add method references.
-Add proper code for filepath (In openfile method), so "Nutrients.txt" gets opened.
+Make labels  font change and look nicer.
 Tidy up the ordering.
 */
