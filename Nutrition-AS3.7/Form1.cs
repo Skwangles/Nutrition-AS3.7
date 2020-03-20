@@ -26,9 +26,10 @@ namespace Nutrition_AS3._7
         public Button[] Forms_Buttons = new Button[5];//stores the instances of Buttons
         public Label[] Forms_Labels = new Label[4]; //stores the instances of Labels
         public ListBox[] Forms_ListBoxes = new ListBox[2]; //stores the instances of Listboxes
+        ComboBox Serving_Size_Com = new ComboBox();
         bool hasCalled = false; //checks if the eventhandler creator and controls add has occured
         bool hadItems = false;
-        
+
         bool containsSpecialCaps = false;
         int recipe_Contents_Height = 300;
         int default_Spacer = 30; //For spacing
@@ -36,7 +37,7 @@ namespace Nutrition_AS3._7
         int searchBarLeft = 2; //the left of item whic        
         int quanitityTBMaxLength = 5;
         int quantityBoxWidth = 30;
-        int servingSizeWidth = 40;
+        int servingSizeWidth = 60;
         int moveDown = 40;//move down controls to put in exit button        
         Color buttonsColor = SystemColors.ButtonFace;
         string recipe_Name_String;
@@ -104,7 +105,7 @@ namespace Nutrition_AS3._7
 
             this.Name = "Nutrient Calculator";
             this.Icon = null;
-
+            this.BackgroundImage = Properties.Resources.Nutrition___Background;
 
 
 
@@ -112,7 +113,7 @@ namespace Nutrition_AS3._7
             Forms_TextBoxes[0] = new TextBox();  //Tb Search
             Forms_TextBoxes[1] = new TextBox();  //Tb Quantitiy
             Forms_TextBoxes[2] = new TextBox();  //Tb Recipe Name
-            Forms_TextBoxes[3] = new TextBox(); //Tb Serving Size
+
             Forms_Buttons[0] = new Button();   //B Search
             Forms_Buttons[1] = new Button();   //B Confirm
             Forms_Buttons[2] = new Button();   //B Clear Recipe
@@ -151,11 +152,13 @@ namespace Nutrition_AS3._7
                 foreach (Label b in Forms_Labels)
                 {
                     Controls.Add(b);
+                    b.BackColor = Color.Transparent;
                 }
                 foreach (ListBox b in Forms_ListBoxes)
                 {
                     Controls.Add(b);
                 }
+                Controls.Add(Serving_Size_Com);
                 //Event Handlers
                 #region create eventhandlers
                 Forms_Buttons[0].Click += new EventHandler(Search_Click);
@@ -296,17 +299,18 @@ namespace Nutrition_AS3._7
             Forms_ListBoxes[1].HorizontalScrollbar = true;
             Forms_ListBoxes[1].Font = new Font(FontFamily.GenericSerif, 10);
 
-            //Serving size textbox
-            Forms_TextBoxes[3].Top = Forms_ListBoxes[1].Top + Forms_ListBoxes[1].Height + default_Spacer;
-            Forms_TextBoxes[3].Left = Forms_ListBoxes[1].Left;
-            Forms_TextBoxes[3].MaxLength = 3;
-            Forms_TextBoxes[3].Width = servingSizeWidth;
-            Forms_TextBoxes[3].Font = new Font("Ariel", 16);
-            Forms_TextBoxes[3].BackColor = Color.LightGray;
+            //Serving size Combo Box
+            Serving_Size_Com.Top = Forms_ListBoxes[1].Top + Forms_ListBoxes[1].Height + default_Spacer;
+            Serving_Size_Com.Left = Forms_ListBoxes[1].Left;
+            Serving_Size_Com.MaxLength = 3;
+            Serving_Size_Com.Width = servingSizeWidth;
+            Serving_Size_Com.Font = new Font("Ariel", 16);
+            Serving_Size_Com.BackColor = Color.LightGray;
+            Serving_Size_Com.Items.AddRange(new object[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 });
 
             //complete button
-            Forms_Buttons[3].Top = Forms_TextBoxes[3].Top + Forms_TextBoxes[3].Height;
-            Forms_Buttons[3].Left = Forms_TextBoxes[3].Left;
+            Forms_Buttons[3].Top = Serving_Size_Com.Top + Serving_Size_Com.Height;
+            Forms_Buttons[3].Left = Serving_Size_Com.Left;
             Forms_Buttons[3].Text = "Complete Recipe";
             Forms_Buttons[3].BackColor = buttonsColor;
 
@@ -329,8 +333,8 @@ namespace Nutrition_AS3._7
             Forms_Labels[2].Text = "Search Here";
 
             //Serving Size Label
-            Forms_Labels[3].Left = Forms_TextBoxes[3].Left + Forms_TextBoxes[3].Width;
-            Forms_Labels[3].Top = Forms_TextBoxes[3].Top;
+            Forms_Labels[3].Left = Serving_Size_Com.Left + Serving_Size_Com.Width;
+            Forms_Labels[3].Top = Serving_Size_Com.Top;
 
             Forms_Labels[3].Text = "Serving Size";
             Forms_Labels[3].AutoSize = true;
@@ -414,7 +418,7 @@ namespace Nutrition_AS3._7
                 MessageBox.Show("Only AlphaNumerics and \",.()-_\" are allowed.");//As some names contain these punctuation.
             }
 
-            
+
 
         }
         //eventhandler for search button
@@ -468,85 +472,65 @@ namespace Nutrition_AS3._7
         }//Clears the recipe listbox
         void Complete_Click(object sender, EventArgs e)
         {
-            if (Forms_ListBoxes[1].Items.Count > 0 && Forms_TextBoxes[3].Text != "" && Forms_TextBoxes[3].Text != null && Forms_TextBoxes[3].Text != "0")
+            if (Forms_ListBoxes[1].Items.Count > 0 && Serving_Size_Com.SelectedItem != null)
             {
-                containsSpecialCaps = false;
-                foreach (char a in allSpecialChars)
+
+
+
+                float Quantitys = 0;
+
+                float servingSize = float.Parse(Serving_Size_Com.SelectedItem.ToString());
+
+                var Per100Grams = new float[9];
+                var AverageSize = new float[9];
+                /*
+               0 Food ID
+    1 Food name
+    2 Energy (kJ)
+    3 Protein (g)
+    4 Fat, total (g)
+    5 Fat, saturated (g)
+    6 Available carbohydrate (g)
+    7 Total sugars (g)
+    8 Sodium (mg)
+                 */
+                foreach (Ingredient s in Forms_ListBoxes[1].Items)
                 {
-                    if (Forms_TextBoxes[3].Text.Contains(a))
+                    Quantitys += s.Quantity;
+                }
+                Console.WriteLine("CompleteClicked");
+                int b;
+                foreach (Ingredient s in Forms_ListBoxes[1].Items)
+                {
+                    b = 0;
+                    //Energy, Protein, FatTotal, FatSat, Carbs, Sodium, Sugar
+                    Per100Grams[b] += s.FEnergy * (s.Quantity / Quantitys);//adds calculations to the listbox.
+                    b++;
+                    Per100Grams[b] += s.FProtein * (s.Quantity / Quantitys);
+                    b++;
+                    Per100Grams[b] += s.FFatTotal * (s.Quantity / Quantitys);
+                    b++;
+                    Per100Grams[b] += s.FSat * (s.Quantity / Quantitys);
+                    b++;
+                    Per100Grams[b] += s.FCarb * (s.Quantity / Quantitys);
+                    b++;
+                    Per100Grams[b] += s.FSug * (s.Quantity / Quantitys);
+                    b++;
+                    Per100Grams[b] += s.FSodium * (s.Quantity / Quantitys);
+                }
+
+                foreach (Ingredient s in Forms_ListBoxes[1].Items)
+                {
+                    //Energy, Protein, FatTotal, FatSat, Carbs, Sodium, Sugar
+                    for (b = 0; b < Per100Grams.Count(); b++)
                     {
-                        containsSpecialCaps = true;
+                        AverageSize[b] += Per100Grams[b] * (servingSize / 100);//loops through each entry and applys the average calculation.                            
                     }
                 }
-                if (!containsSpecialCaps)
-                {
-                    try//try is to find if serving size is a float.
-                    {
-                        float Quantitys = 0;
-
-                        float servingSize = float.Parse(Forms_TextBoxes[3].Text);
-                        float servings = Quantitys / servingSize;
-                        var Per100Grams = new float[9];
-                        var AverageSize = new float[9];
-                        /*
-                       0 Food ID
-            1 Food name
-            2 Energy (kJ)
-            3 Protein (g)
-            4 Fat, total (g)
-            5 Fat, saturated (g)
-            6 Available carbohydrate (g)
-            7 Total sugars (g)
-            8 Sodium (mg)
-                         */
-                        foreach (Ingredient s in Forms_ListBoxes[1].Items)
-                        {
-                            Quantitys += s.Quantity;
-                        }
-                        Console.WriteLine("CompleteClicked");
-                        int b;
-                        foreach (Ingredient s in Forms_ListBoxes[1].Items)
-                        {
-                            b = 0;
-                            //Energy, Protein, FatTotal, FatSat, Carbs, Sodium, Sugar
-                            Per100Grams[b] += s.FEnergy * (s.Quantity / Quantitys);//adds calculations to the listbox.
-                            b++;
-                            Per100Grams[b] += s.FProtein * (s.Quantity / Quantitys);
-                            b++;
-                            Per100Grams[b] += s.FFatTotal * (s.Quantity / Quantitys);
-                            b++;
-                            Per100Grams[b] += s.FSat * (s.Quantity / Quantitys);
-                            b++;
-                            Per100Grams[b] += s.FCarb * (s.Quantity / Quantitys);
-                            b++;
-                            Per100Grams[b] += s.FSug * (s.Quantity / Quantitys);
-                            b++;
-                            Per100Grams[b] += s.FSodium * (s.Quantity / Quantitys);
-                        }
-
-                        foreach (Ingredient s in Forms_ListBoxes[1].Items)
-                        {
-                            //Energy, Protein, FatTotal, FatSat, Carbs, Sodium, Sugar
-                            for (b = 0; b < Per100Grams.Count(); b++)
-                            {
-                                AverageSize[b] += Per100Grams[b] * (servingSize / 100);//loops through each entry and applys the average calculation.                            
-                            }
-                        }
-                        this.BackColor = Color.Black;
-                        DrawNutrientsTable(Per100Grams, AverageSize);
-                    }
+                this.BackColor = Color.Black;
+                DrawNutrientsTable(Per100Grams, AverageSize);
 
 
-
-                    catch
-                    {
-                        MessageBox.Show("Serving size must be a number.");
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Positive numbers only. (>0)");
-                }
             }
             else
             {
