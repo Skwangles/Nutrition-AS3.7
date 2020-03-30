@@ -28,7 +28,8 @@ namespace Nutrition_AS3._7
             string temp = FName.Replace("\"", "");
             if (Quantity != 0)
             {
-                temp = " Quantity: " + Quantity+ "g |    "+ temp ;
+                temp = temp + " [" + Quantity + "g]";
+                
             }
             return temp;
         }

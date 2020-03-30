@@ -61,12 +61,12 @@ namespace Nutrition_AS3._7.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Bitmap Nutrition___Background {
+        internal static System.Drawing.Icon icons8_hamburger_50 {
             get {
-                object obj = ResourceManager.GetObject("Nutrition___Background", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
+                object obj = ResourceManager.GetObject("icons8_hamburger_50", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
     }
