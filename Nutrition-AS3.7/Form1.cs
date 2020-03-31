@@ -376,7 +376,11 @@ namespace Nutrition_AS3._7
                 {
                     try
                     {
-                        ((Ingredient)Forms_ListBoxes[0].SelectedItem).Quantity = float.Parse(Forms_TextBoxes[1].Text);//adds the quanitity added
+                        ((Ingredient)Forms_ListBoxes[0].SelectedItem).Quantity += float.Parse(Forms_TextBoxes[1].Text);
+                        if (Forms_ListBoxes[1].Items.Contains((Ingredient)Forms_ListBoxes[0].SelectedItem))
+                        {
+                            Forms_ListBoxes[1].Items.Remove((Ingredient)Forms_ListBoxes[0].SelectedItem);
+                        }//adds the quanitity added
                         Forms_ListBoxes[1].Items.Add((Ingredient)Forms_ListBoxes[0].SelectedItem);//adds to the recipe list.
                         Forms_TextBoxes[0].Text = "";
                         Forms_TextBoxes[1].Text = "";//so textboxes are ready for next ingredient.
@@ -448,7 +452,7 @@ namespace Nutrition_AS3._7
                     //Energy, Protein, FatTotal, FatSat, Carbs, Sodium, Sugar
                     for (b = 0; b < Per100Grams.Count(); b++)
                     {
-                        AverageSize[b] += Per100Grams[b] * ((serving_Size / Quantitys) / 100);//loops through each entry and applys the average calculation.                            
+                        AverageSize[b] += Per100Grams[b] * ((Quantitys/serving_Size) / 100);//loops through each entry and applys the average calculation.                            
                     }
                 }
                 this.BackColor = Color.Black;

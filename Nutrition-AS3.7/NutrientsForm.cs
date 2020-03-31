@@ -39,7 +39,7 @@ namespace Nutrition_AS3._7
             int num = 0;
             foreach (float f in h)
             {
-                tem[num] = Math.Round(f, 3).ToString();
+                tem[num] = Math.Round(f, 2).ToString();
                 num++;
             }
             return tem;
