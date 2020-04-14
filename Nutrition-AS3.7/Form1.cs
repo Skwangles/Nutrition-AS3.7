@@ -13,10 +13,10 @@ namespace Nutrition_AS3._7
         public Form1()
         {
             InitializeComponent();
-            g = this.CreateGraphics();
+            
 
         }
-        Graphics g;
+        
         #region Default Values and Arrays
         //sets the integers and arrays
         //file path
@@ -38,7 +38,7 @@ namespace Nutrition_AS3._7
         int moveDown = 40;//move down controls to put in exit button        
         Color buttonsColor = SystemColors.ButtonFace;
         string recipe_Name_String;
-        string SearchSpecChars = "!@#$^&*~`=+[{]}\\|;:'\"<>/?";
+        string searchSpecChars = "!@#$^&*~`=+[{]}\\|;:'\"<>/?";
         string allSpecialChars = "\",.()-_\"!@#$%^&*~`=+[{]}\\|;:'\"<>/?";
         //above, sets the locations of the forms items.
         static List<Ingredient> Recipies = new List<Ingredient>();
@@ -132,24 +132,24 @@ namespace Nutrition_AS3._7
             if (!hasCalled)//checks if the items have already been added.
             {
                 //adds items to controls
-                int a = 0;//As  Recipe Textbox has already been added, is skipped(Index of it is 2)
-                foreach (TextBox b in Forms_TextBoxes)
+                int counts = 0;//As  Recipe Textbox has already been added, is skipped(Index of it is 2)
+                foreach (TextBox TextboxInstanceForeach in Forms_TextBoxes)
                 {
-                    if (a != 2 && a != 4)
+                    if (counts != 2 && counts != 4)
                     {
-                        Controls.Add(b);
-                        a++;
+                        Controls.Add(TextboxInstanceForeach);
+                        counts++;
                     }
                     else
                     {
-                        a++;
+                        counts++;
                     }
                 }
-                foreach (Button b in Forms_Buttons)//loops through each array, adding them to controls.
+                foreach (Button counters in Forms_Buttons)//loops through each array, adding them to controls.
                 {
-                    if (b != Forms_Buttons[0])
+                    if (counters != Forms_Buttons[0])
                     {
-                        Controls.Add(b);
+                        Controls.Add(counters);
                     }
 
                 }
@@ -289,23 +289,23 @@ namespace Nutrition_AS3._7
             //
             Forms_Labels[3].Left = Forms_TextBoxes[3].Left + Forms_TextBoxes[3].Width;
             Forms_Labels[3].Top = Forms_TextBoxes[3].Top;
-            Forms_Labels[3].Text = "Serving Size";
+            Forms_Labels[3].Text = "Serving Size(g)";
             Forms_Labels[3].AutoSize = true;
 
-            foreach (TextBox a in Forms_TextBoxes)
+            foreach (TextBox TextboxInstance in Forms_TextBoxes)
             {
                 try
                 {
-                    a.TextAlign = HorizontalAlignment.Center;
+                    TextboxInstance.TextAlign = HorizontalAlignment.Center;
                 }
                 catch
                 { }
 
             }
-            for (int m = 0; m < 4; m++)
+            for (int counter = 0; counter < 4; counter++)
             {
-                Forms_Buttons[m].UseVisualStyleBackColor = true;
-                Forms_Buttons[m].FlatStyle = 0;
+                Forms_Buttons[counter].UseVisualStyleBackColor = true;
+                Forms_Buttons[counter].FlatStyle = 0;
             }
             this.Show();
         }//sets item propetires
@@ -314,10 +314,10 @@ namespace Nutrition_AS3._7
         bool HasSpecChars(int tbindex, int specialList)//reused to check against special chars
         {
 
-            foreach (char a in (specialList == 1 ? SearchSpecChars : allSpecialChars))
+            foreach (char charInside in (specialList == 1 ? searchSpecChars : allSpecialChars))//reuses the check char's function. One list needs to be used to allow things that the other lists completely block.
             {
 
-                if (Forms_TextBoxes[tbindex].Text.Contains(a) && (specialList == 1 ? true : a != char.Parse(".")))
+                if (Forms_TextBoxes[tbindex].Text.Contains(charInside) && (specialList == 1 ? true : charInside != char.Parse(".")))
                 {
                     return true;
                 }
@@ -349,11 +349,11 @@ namespace Nutrition_AS3._7
 
 
                     Forms_ListBoxes[0].Items.Clear();
-                    foreach (Ingredient a in Recipies) //searches each item
+                    foreach (Ingredient RecipeIngredientInstance in Recipies) //searches each item
                     {
-                        if (a.FName.ToLower().Contains(Forms_TextBoxes[0].Text.ToLower()))//checks if search query exists, and if it is present
+                        if (RecipeIngredientInstance.FName.ToLower().Contains(Forms_TextBoxes[0].Text.ToLower()))//checks if search query exists, and if it is present
                         {
-                            Forms_ListBoxes[0].Items.Add(a);
+                            Forms_ListBoxes[0].Items.Add(RecipeIngredientInstance);
                             hadItems = true;
                         }
                         //removed debug -- not contained print
@@ -409,9 +409,9 @@ namespace Nutrition_AS3._7
         void ClearRecipe_Click(object sender, EventArgs e)
         {
             Console.WriteLine("ClearClicked");
-            foreach (Ingredient ing in Forms_ListBoxes[1].Items)
+            foreach (Ingredient IngredientInstances in Forms_ListBoxes[1].Items)
             {
-                ing.Quantity = 0;
+                IngredientInstances.Quantity = 0;
             }
             Forms_ListBoxes[1].Items.Clear();//clears listbox
         }//Clears the recipe listbox       
@@ -423,42 +423,42 @@ namespace Nutrition_AS3._7
                 float Quantitys = 0;
                 var Per100Grams = new float[7];
                 var AverageSize = new float[7];
-                foreach (Ingredient s in Forms_ListBoxes[1].Items)
+                foreach (Ingredient IngredientInstance in Forms_ListBoxes[1].Items)
                 {
-                    Quantitys += s.Quantity;
+                    Quantitys += IngredientInstance.Quantity;
                 }
                 Console.WriteLine("CompleteClicked");
-                int b;
+                int indexCount;
                 foreach (Ingredient s in Forms_ListBoxes[1].Items)
                 {
                     //Energy, Protein, FatTotal, FatSat, Carbs, Sodium, Sugar
-                    b = 0;
-                    Per100Grams[b] += s.FEnergy * (s.Quantity / Quantitys);//adds calculations to the listbox.
-                    b++;
-                    Per100Grams[b] += s.FProtein * (s.Quantity / Quantitys);
-                    b++;
-                    Per100Grams[b] += s.FFatTotal * (s.Quantity / Quantitys);
-                    b++;
-                    Per100Grams[b] += s.FSat * (s.Quantity / Quantitys);
-                    b++;
-                    Per100Grams[b] += s.FCarb * (s.Quantity / Quantitys);
-                    b++;
-                    Per100Grams[b] += s.FSug * (s.Quantity / Quantitys);
-                    b++;
-                    Per100Grams[b] += s.FSodium * (s.Quantity / Quantitys);
+                    indexCount = 0;
+                    Per100Grams[indexCount] += s.FEnergy * (s.Quantity / Quantitys);//adds calculations to the listbox.
+                    indexCount++;
+                    Per100Grams[indexCount] += s.FProtein * (s.Quantity / Quantitys);
+                    indexCount++;
+                    Per100Grams[indexCount] += s.FFatTotal * (s.Quantity / Quantitys);
+                    indexCount++;
+                    Per100Grams[indexCount] += s.FSat * (s.Quantity / Quantitys);
+                    indexCount++;
+                    Per100Grams[indexCount] += s.FCarb * (s.Quantity / Quantitys);
+                    indexCount++;
+                    Per100Grams[indexCount] += s.FSug * (s.Quantity / Quantitys);
+                    indexCount++;
+                    Per100Grams[indexCount] += s.FSodium * (s.Quantity / Quantitys);
                 }
                 foreach (Ingredient s in Forms_ListBoxes[1].Items)
                 {
                     //Energy, Protein, FatTotal, FatSat, Carbs, Sodium, Sugar
-                    for (b = 0; b < Per100Grams.Count(); b++)
+                    for (indexCount = 0; indexCount < Per100Grams.Count(); indexCount++)
                     {
-                        AverageSize[b] += Per100Grams[b] * ((Quantitys/serving_Size) / 100);//loops through each entry and applys the average calculation.                            
+                        AverageSize[indexCount] += Per100Grams[indexCount] * ((serving_Size) / 100);//loops through each entry and applys the average calculation.                            
                     }
                 }
                 this.BackColor = Color.Black;
                 this.BackgroundImage = null;
                 string[] NutritionSubjects = new string[] { "", "Per 100g", "Per Serving" };
-                var TableDisplay = new NutrientsForm(Per100Grams, AverageSize, NutritionSubjects, recipe_Name_String, float.Parse(Forms_TextBoxes[3].Text));
+                var TableDisplay = new NutrientsForm(Per100Grams, AverageSize, NutritionSubjects, recipe_Name_String, Quantitys/float.Parse(Forms_TextBoxes[3].Text));
                 TableDisplay.ShowDialog();
                 this.Close();
             }
@@ -500,7 +500,7 @@ namespace Nutrition_AS3._7
             string filename = "Nutrientfile.txt";
             StreamReader reader = File.OpenText(filename);
 
-            int i = 0;//Skip the very first line, which says the layout
+            int counting = 0;//Skip the very first line, which says the layout
             Console.Write(".... reading file");
 
             //Load data into an array 
@@ -508,16 +508,16 @@ namespace Nutrition_AS3._7
             {
                 string[] line = reader.ReadLine().Split('\t');
 
-                if (!(i == 0))
+                if (!(counting == 0))
                 {
                     //read in line and split by tab 
 
                     Recipies.Add(new Ingredient(line[0], line[1], float.Parse(line[2]), float.Parse(line[3]), float.Parse(line[4]), float.Parse(line[5]), float.Parse(line[6]), float.Parse(line[7]), float.Parse(line[8])));
-                    i++;
+                    counting++;
                 }
                 else
                 {
-                    i++;
+                    counting++;
                 }
             }
             reader.Close();

@@ -12,22 +12,22 @@ namespace Nutrition_AS3._7
 {
     public partial class NutrientsForm : Form
     {
-        public NutrientsForm(float[] G100, float[] Per, string[] Labs, string RecipeName, float Servings)
+        public NutrientsForm(float[] G100, float[] Per, string[] namesTitle, string recipeName, float servings)
         {
             InitializeComponent();
-            Graphics g = this.CreateGraphics();
+            Graphics backgroundgraphics = this.CreateGraphics();
             this.g100 = G100;
             this.PerS = Per;
-            this.Labs = Labs;
-            this.servings = Servings;
-            this.recipeName = RecipeName;
+            this.titleNames = namesTitle;
+            this.servings = servings;
+            this.recipeName = recipeName;
 
         }
         string[] Labels = new string[] { "Energy", "Protein", "Fat, Total", " -Saturated Fat", "Carbohydrates", "Sugars", "Sodium" };
         bool hasRun = false;
         int default_spacer = 30;
         int gapBeforeTable = 100;
-        string[] Labs;
+        string[] titleNames;
         string recipeName;
         float servings;
         float[] g100;
@@ -35,14 +35,14 @@ namespace Nutrition_AS3._7
         TableLayoutPanel TabLayout = new TableLayoutPanel();
         string[] ChangeToString(float[] h)
         {
-            var tem = new string[h.Length];
+            var temporary = new string[h.Length];
             int num = 0;
             foreach (float f in h)
             {
-                tem[num] = Math.Round(f, 2).ToString();
+                temporary[num] = Math.Round(f, 2).ToString();
                 num++;
             }
-            return tem;
+            return temporary;
         }
         void Graph()
         {
@@ -113,46 +113,46 @@ namespace Nutrition_AS3._7
                 for (int i = 0; i < 3; i++)
                 {
                     var temp = new Label();
-                    temp.Text = Labs[i];
+                    temp.Text = titleNames[i];
                     temp.Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);
                     TabLayout.Controls.Add(temp, i, 0);
                 }
                 //labels first colum
-                int enu = 1;
+                int countup = 1;
                 foreach (string st in Labels)
                 {
                     var temp = new Label();
                     temp.Text = st;
-                    TabLayout.Controls.Add(temp, 0, enu);
+                    TabLayout.Controls.Add(temp, 0, countup);
 
-                    enu++;
+                    countup++;
                 }
                 //
                 //per 100g information entry
                 //
-                enu = 1;
+                countup = 1;
                 foreach (string st in Per100)
                 {
 
                     var temp = new Label();
                     temp.Text = st;
-                    TabLayout.Controls.Add(temp, 1, enu);
+                    TabLayout.Controls.Add(temp, 1, countup);
 
-                    enu++;
+                    countup++;
                 }
 
                 //
                 //Per serving enter
                 //
-                enu = 1;
+                countup = 1;
                 foreach (string st in PerServing)
                 {
 
                     var temp = new Label();
                     temp.Text = st;
-                    TabLayout.Controls.Add(temp, 2, enu);
+                    TabLayout.Controls.Add(temp, 2, countup);
 
-                    enu++;
+                    countup++;
                 }
                 this.Show();
                 hasRun = true;
