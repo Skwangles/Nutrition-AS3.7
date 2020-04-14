@@ -452,7 +452,7 @@ namespace Nutrition_AS3._7
                     //Energy, Protein, FatTotal, FatSat, Carbs, Sodium, Sugar
                     for (indexCount = 0; indexCount < Per100Grams.Count(); indexCount++)
                     {
-                        AverageSize[indexCount] += Per100Grams[indexCount] * ((serving_Size) / 100);//loops through each entry and applys the average calculation.                            
+                        AverageSize[indexCount] = Per100Grams[indexCount] * ((serving_Size) / 100);//loops through each entry and applys the average calculation.                            
                     }
                 }
                 this.BackColor = Color.Black;
